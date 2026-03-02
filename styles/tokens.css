@@ -1,35 +1,35 @@
 :root {
-  /* Brand Colors */
-  --gold-primary:   #C9A96E;
-  --gold-light:     #E8D5A3;
-  --dark-base:      #111111;
-  --dark-card:      #1C1A17;
-  --warm-cream:     #FAF7F2;
-  --charcoal:       #2B2018;
+    /* Brand Colors */
+    --gold-primary: #C9A96E;
+    --gold-light: #E8D5A3;
+    --dark-base: #111111;
+    --dark-card: #1C1A17;
+    --warm-cream: #FAF7F2;
+    --charcoal: #2B2018;
 
-  /* Text Colors */
-  --text-on-dark:   #FFFFFF;
-  --text-muted:     #B8B0A4;
-  --text-on-light:  #1A1A1A;
-  --text-secondary: #5A5A5A;
-  --text-meta:      #9A9A9A;
+    /* Text Colors */
+    --text-on-dark: #FFFFFF;
+    --text-muted: #B8B0A4;
+    --text-on-light: #1A1A1A;
+    --text-secondary: #5A5A5A;
+    --text-meta: #9A9A9A;
 
-  /* Borders */
-  --border-subtle:  #E8E0D5;
+    /* Borders */
+    --border-subtle: #E8E0D5;
 
-  /* Typography */
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans:  'Montserrat', system-ui, sans-serif;
-  --font-body:  'Lora', Georgia, serif;
+    /* Typography */
+    --font-serif: 'Playfair Display', georgia, serif;
+    --font-sans: 'Montserrat', system-ui, sans-serif;
+    --font-body: 'Lora', georgia, serif;
 
-  /* Spacing */
-  --section-padding: clamp(80px, 10vw, 140px);
-  --container-padding: clamp(20px, 5vw, 80px);
-  --max-width: 1280px;
+    /* Spacing */
+    --section-padding: clamp(80px, 10vw, 140px);
+    --container-padding: clamp(20px, 5vw, 80px);
+    --max-width: 1280px;
 
-  /* Animation */
-  --spring-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --transition-fast: 200ms;
-  --transition-base: 280ms;
-  --transition-slow: 400ms;
+    /* Animation */
+    --spring-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --transition-fast: 200ms;
+    --transition-base: 280ms;
+    --transition-slow: 400ms;
 }
