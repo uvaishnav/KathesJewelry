@@ -1,0 +1,61 @@
+@import 'tailwindcss';
+@import '../styles/tokens.css';
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  background-color: #FFFFFF;
+  color: var(--text-on-light);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global focus ring */
+:focus-visible {
+  outline: 2px solid var(--gold-primary);
+  outline-offset: 2px;
+}
+
+/* Text selection */
+::selection {
+  background: #C9A96E40;
+  color: var(--text-on-light);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold-primary);
+  border-radius: 3px;
+}
+
+/* Anchor scroll offset for sticky nav */
+[id] {
+  scroll-margin-top: 80px;
+}
+
+/* Image CSS fallback — shows dark bg for missing images */
+img {
+  background-color: var(--dark-card);
+}
+
+/* Reduced motion override */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
