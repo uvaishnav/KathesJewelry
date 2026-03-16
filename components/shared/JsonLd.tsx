@@ -81,10 +81,13 @@ export function JsonLd() {
     },
   }
 
+  // Escape closing script tags to prevent XSS if content becomes dynamic
+  const safeJson = JSON.stringify(schema).replace(/</g, '\\u003c')
+
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: safeJson }}
     />
   )
 }

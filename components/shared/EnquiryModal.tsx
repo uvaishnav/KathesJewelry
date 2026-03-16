@@ -1,17 +1,20 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
 import { AnimatePresence, LazyMotion, domAnimation, m } from 'motion/react'
 import { X } from 'lucide-react'
 import { ContactForm } from './ContactForm'
 
-interface EnquiryModalProps {
+export interface EnquiryModalProps {
   isOpen: boolean
   onClose: () => void
   productName: string
 }
 
 export function EnquiryModal({ isOpen, onClose, productName }: EnquiryModalProps) {
+  const panelRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -19,16 +22,43 @@ export function EnquiryModal({ isOpen, onClose, productName }: EnquiryModalProps
     [onClose]
   )
 
+  // Focus trap: keep Tab cycling within the modal
+  const handleFocusTrap = useCallback((e: KeyboardEvent) => {
+    if (e.key !== 'Tab' || !panelRef.current) return
+
+    const focusableElements = panelRef.current.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+    const firstElement = focusableElements[0]
+    const lastElement = focusableElements[focusableElements.length - 1]
+
+    if (e.shiftKey) {
+      if (document.activeElement === firstElement) {
+        lastElement?.focus()
+        e.preventDefault()
+      }
+    } else {
+      if (document.activeElement === lastElement) {
+        firstElement?.focus()
+        e.preventDefault()
+      }
+    }
+  }, [])
+
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('keydown', handleEscape)
+      document.addEventListener('keydown', handleFocusTrap)
       document.body.style.overflow = 'hidden'
+      // Focus the close button when modal opens
+      requestAnimationFrame(() => closeButtonRef.current?.focus())
     }
     return () => {
       document.removeEventListener('keydown', handleEscape)
+      document.removeEventListener('keydown', handleFocusTrap)
       document.body.style.overflow = ''
     }
-  }, [isOpen, handleEscape])
+  }, [isOpen, handleEscape, handleFocusTrap])
 
   return (
     <LazyMotion features={domAnimation}>
@@ -47,6 +77,7 @@ export function EnquiryModal({ isOpen, onClose, productName }: EnquiryModalProps
 
             {/* Slide-in Panel */}
             <m.div
+              ref={panelRef}
               role="dialog"
               aria-modal="true"
               aria-label={`Enquire about ${productName}`}
@@ -60,13 +91,14 @@ export function EnquiryModal({ isOpen, onClose, productName }: EnquiryModalProps
               <div className="p-6 md:p-8">
                 {/* Close button */}
                 <button
+                  ref={closeButtonRef}
                   onClick={onClose}
                   className="mb-6 flex items-center gap-2 font-sans text-[12px] tracking-[2px] uppercase
                              text-[var(--text-secondary)] hover:text-[var(--text-on-light)]
                              transition-colors duration-200"
                   aria-label="Close enquiry modal"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-4 h-4" aria-hidden="true" />
                   Close
                 </button>
 
@@ -81,7 +113,7 @@ export function EnquiryModal({ isOpen, onClose, productName }: EnquiryModalProps
 
                 {/* Form */}
                 <ContactForm
-                  prefilledSubject={`Product Enquiry`}
+                  prefilledSubject="Product Enquiry"
                 />
               </div>
             </m.div>

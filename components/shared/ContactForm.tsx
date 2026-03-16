@@ -6,12 +6,18 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckCircle } from 'lucide-react'
 import { contactSchema, type ContactFormData, subjectOptions } from '@/lib/schema/contact'
 
-interface ContactFormProps {
+export interface ContactFormProps {
   prefilledSubject?: string
 }
 
 export function ContactForm({ prefilledSubject }: ContactFormProps) {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
+
+  // Validate prefilledSubject against allowed options, fallback to General Inquiry
+  const validatedSubject: typeof subjectOptions[number] =
+    prefilledSubject && (subjectOptions as readonly string[]).includes(prefilledSubject)
+      ? (prefilledSubject as typeof subjectOptions[number])
+      : 'General Inquiry'
 
   const {
     register,
@@ -21,7 +27,7 @@ export function ContactForm({ prefilledSubject }: ContactFormProps) {
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
-      subject: prefilledSubject ?? 'General Inquiry',
+      subject: validatedSubject,
     },
   })
 
@@ -43,8 +49,8 @@ export function ContactForm({ prefilledSubject }: ContactFormProps) {
 
   if (status === 'success') {
     return (
-      <div className="flex flex-col items-center text-center py-12">
-        <CheckCircle className="w-12 h-12 text-[var(--gold-primary)] mb-4" />
+      <div className="flex flex-col items-center text-center py-12" role="status" aria-live="polite">
+        <CheckCircle className="w-12 h-12 text-[var(--gold-primary)] mb-4" aria-hidden="true" />
         <h3 className="font-serif text-[24px] font-semibold text-[var(--text-on-light)] mb-2">
           Message Sent
         </h3>
@@ -56,19 +62,23 @@ export function ContactForm({ prefilledSubject }: ContactFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+    <form onSubmit={handleSubmit(onSubmit as Parameters<typeof handleSubmit>[0])} className="space-y-6" noValidate>
       {/* Name */}
       <div>
         <label
           htmlFor="contact-name"
           className="block font-sans text-[11px] tracking-[1.5px] uppercase text-[var(--text-secondary)] mb-2"
         >
-          Full Name <span className="text-red-500">*</span>
+          Full Name <span className="text-red-500" aria-hidden="true">*</span>
+          <span className="sr-only">(required)</span>
         </label>
         <input
           id="contact-name"
           type="text"
           {...register('name')}
+          aria-required="true"
+          aria-invalid={!!errors.name}
+          aria-describedby={errors.name ? 'contact-name-error' : undefined}
           className="w-full border border-[var(--border-subtle)] bg-white px-4 py-3
                      font-body text-[16px] text-[var(--text-on-light)]
                      focus:border-[var(--gold-primary)] focus:ring-0 focus:outline-none
@@ -76,7 +86,9 @@ export function ContactForm({ prefilledSubject }: ContactFormProps) {
           placeholder="Your full name"
         />
         {errors.name && (
-          <p className="mt-1 font-sans text-[12px] text-red-500">{errors.name.message}</p>
+          <p id="contact-name-error" className="mt-1 font-sans text-[12px] text-red-500" role="alert">
+            {errors.name.message}
+          </p>
         )}
       </div>
 
@@ -86,12 +98,16 @@ export function ContactForm({ prefilledSubject }: ContactFormProps) {
           htmlFor="contact-email"
           className="block font-sans text-[11px] tracking-[1.5px] uppercase text-[var(--text-secondary)] mb-2"
         >
-          Email Address <span className="text-red-500">*</span>
+          Email Address <span className="text-red-500" aria-hidden="true">*</span>
+          <span className="sr-only">(required)</span>
         </label>
         <input
           id="contact-email"
           type="email"
           {...register('email')}
+          aria-required="true"
+          aria-invalid={!!errors.email}
+          aria-describedby={errors.email ? 'contact-email-error' : undefined}
           className="w-full border border-[var(--border-subtle)] bg-white px-4 py-3
                      font-body text-[16px] text-[var(--text-on-light)]
                      focus:border-[var(--gold-primary)] focus:ring-0 focus:outline-none
@@ -99,7 +115,9 @@ export function ContactForm({ prefilledSubject }: ContactFormProps) {
           placeholder="you@email.com"
         />
         {errors.email && (
-          <p className="mt-1 font-sans text-[12px] text-red-500">{errors.email.message}</p>
+          <p id="contact-email-error" className="mt-1 font-sans text-[12px] text-red-500" role="alert">
+            {errors.email.message}
+          </p>
         )}
       </div>
 
@@ -124,29 +142,43 @@ export function ContactForm({ prefilledSubject }: ContactFormProps) {
       </div>
 
       {/* Subject */}
-      <div>
+      <div className="relative">
         <label
           htmlFor="contact-subject"
           className="block font-sans text-[11px] tracking-[1.5px] uppercase text-[var(--text-secondary)] mb-2"
         >
-          Subject <span className="text-red-500">*</span>
+          Subject <span className="text-red-500" aria-hidden="true">*</span>
+          <span className="sr-only">(required)</span>
         </label>
-        <select
-          id="contact-subject"
-          {...register('subject')}
-          className="w-full border border-[var(--border-subtle)] bg-white px-4 py-3
-                     font-body text-[16px] text-[var(--text-on-light)]
-                     focus:border-[var(--gold-primary)] focus:ring-0 focus:outline-none
-                     transition-colors duration-200 appearance-none"
-        >
-          {subjectOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            id="contact-subject"
+            {...register('subject')}
+            aria-required="true"
+            aria-invalid={!!errors.subject}
+            aria-describedby={errors.subject ? 'contact-subject-error' : undefined}
+            className="w-full border border-[var(--border-subtle)] bg-white px-4 py-3 pr-10
+                       font-body text-[16px] text-[var(--text-on-light)]
+                       focus:border-[var(--gold-primary)] focus:ring-0 focus:outline-none
+                       transition-colors duration-200 appearance-none"
+          >
+            {subjectOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {/* Dropdown indicator */}
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg className="w-4 h-4 text-[var(--text-meta)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
         {errors.subject && (
-          <p className="mt-1 font-sans text-[12px] text-red-500">{errors.subject.message}</p>
+          <p id="contact-subject-error" className="mt-1 font-sans text-[12px] text-red-500" role="alert">
+            {errors.subject.message}
+          </p>
         )}
       </div>
 
@@ -156,12 +188,16 @@ export function ContactForm({ prefilledSubject }: ContactFormProps) {
           htmlFor="contact-message"
           className="block font-sans text-[11px] tracking-[1.5px] uppercase text-[var(--text-secondary)] mb-2"
         >
-          Message <span className="text-red-500">*</span>
+          Message <span className="text-red-500" aria-hidden="true">*</span>
+          <span className="sr-only">(required)</span>
         </label>
         <textarea
           id="contact-message"
           rows={5}
           {...register('message')}
+          aria-required="true"
+          aria-invalid={!!errors.message}
+          aria-describedby={errors.message ? 'contact-message-error' : undefined}
           className="w-full border border-[var(--border-subtle)] bg-white px-4 py-3
                      font-body text-[16px] text-[var(--text-on-light)]
                      focus:border-[var(--gold-primary)] focus:ring-0 focus:outline-none
@@ -169,13 +205,15 @@ export function ContactForm({ prefilledSubject }: ContactFormProps) {
           placeholder="How can we help you?"
         />
         {errors.message && (
-          <p className="mt-1 font-sans text-[12px] text-red-500">{errors.message.message}</p>
+          <p id="contact-message-error" className="mt-1 font-sans text-[12px] text-red-500" role="alert">
+            {errors.message.message}
+          </p>
         )}
       </div>
 
       {/* Error state */}
       {status === 'error' && (
-        <div className="bg-red-50 border border-red-200 p-4">
+        <div className="bg-red-50 border border-red-200 p-4" role="alert" aria-live="assertive">
           <p className="font-body text-[14px] text-red-700">
             Something went wrong. Please call us directly at{' '}
             <a href="tel:+12124752986" className="font-semibold underline">

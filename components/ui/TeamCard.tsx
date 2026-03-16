@@ -1,13 +1,13 @@
 import Image from 'next/image'
 
-interface TeamMember {
+export interface TeamMember {
   name: string
   role: string
   bio: string
   image: string
 }
 
-interface TeamCardProps {
+export interface TeamCardProps {
   member: TeamMember
 }
 

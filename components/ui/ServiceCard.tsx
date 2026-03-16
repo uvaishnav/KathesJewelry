@@ -2,14 +2,14 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
-interface ServiceCardData {
+export interface ServiceCardData {
   icon: LucideIcon
   title: string
   description: string
   href: string
 }
 
-interface ServiceCardProps {
+export interface ServiceCardProps {
   service: ServiceCardData
 }
 

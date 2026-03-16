@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 type ButtonVariant = 'primary' | 'ghost' | 'dark-ghost' | 'text'
 
-interface ButtonProps {
+export interface ButtonProps {
   variant?: ButtonVariant
   href?: string
   onClick?: () => void
@@ -14,7 +14,7 @@ interface ButtonProps {
   'aria-label'?: string
 }
 
-const base = 'inline-flex items-center justify-center gap-2 font-sans font-semibold text-[12px] tracking-[2px] uppercase transition-all duration-200'
+const base = 'inline-flex items-center justify-center gap-2 font-sans font-semibold text-[12px] tracking-[2px] uppercase transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
 
 const variants: Record<ButtonVariant, string> = {
   primary: `${base} bg-[var(--gold-primary)] text-[#111] px-8 py-4 hover:bg-[var(--gold-light)] shadow-[0_0_30px_rgba(201,169,110,0.15)]`,
@@ -39,7 +39,7 @@ export function Button({
 }: ButtonProps) {
   const classes = `${variants[variant]} ${className ?? ''}`.trim()
 
-  if (href) {
+  if (href && !disabled) {
     return external ? (
       <a
         href={href}
@@ -47,11 +47,12 @@ export function Button({
         target="_blank"
         rel="noopener noreferrer"
         aria-label={ariaLabel}
+        onClick={onClick}
       >
         {children}
       </a>
     ) : (
-      <Link href={href} className={classes} aria-label={ariaLabel}>
+      <Link href={href} className={classes} aria-label={ariaLabel} onClick={onClick}>
         {children}
       </Link>
     )

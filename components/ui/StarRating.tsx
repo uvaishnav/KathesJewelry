@@ -1,6 +1,6 @@
 import { Star } from 'lucide-react'
 
-interface StarRatingProps {
+export interface StarRatingProps {
   rating: number
   max?: number
   size?: 'sm' | 'md' | 'lg'
@@ -16,12 +16,13 @@ export function StarRating({ rating, max = 5, size = 'md' }: StarRatingProps) {
   const sizeClass = sizeMap[size]
 
   return (
-    <div className="flex items-center gap-0.5" aria-label={`${rating} out of ${max} stars`}>
+    <div className="flex items-center gap-0.5" role="img" aria-label={`${rating} out of ${max} stars`}>
       {Array.from({ length: max }, (_, i) => {
         const isFilled = i < Math.round(rating)
         return (
           <Star
             key={i}
+            aria-hidden="true"
             className={`${sizeClass} ${
               isFilled
                 ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)]'

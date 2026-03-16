@@ -1,11 +1,11 @@
 import Link from 'next/link'
 
-interface BreadcrumbItem {
+export interface BreadcrumbItem {
   label: string
   href?: string
 }
 
-interface BreadcrumbProps {
+export interface BreadcrumbProps {
   items: BreadcrumbItem[]
 }
 
@@ -17,7 +17,7 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
           const isLast = index === items.length - 1
 
           return (
-            <li key={item.label} className="flex items-center gap-2">
+            <li key={`${item.label}-${item.href ?? index}`} className="flex items-center gap-2">
               {index > 0 && (
                 <span className="text-[var(--gold-primary)]" aria-hidden="true">
                   /
@@ -25,7 +25,10 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
               )}
 
               {isLast ? (
-                <span className="text-[var(--text-on-light)] font-medium">
+                <span
+                  className="text-[var(--text-on-light)] font-medium"
+                  aria-current="page"
+                >
                   {item.label}
                 </span>
               ) : (

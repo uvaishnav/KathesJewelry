@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-interface Product {
+export interface Product {
   _id: string
   name: string
   slug: string
@@ -13,7 +13,7 @@ interface Product {
   image: string
 }
 
-interface ProductCardProps {
+export interface ProductCardProps {
   product: Product
   onEnquire: (name: string) => void
 }
@@ -38,6 +38,7 @@ export function ProductCard({ product, onEnquire }: ProductCardProps) {
             className="object-cover w-full h-full
                        group-hover:scale-105
                        transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            placeholder="empty"
           />
         </div>
       </Link>
@@ -57,7 +58,7 @@ export function ProductCard({ product, onEnquire }: ProductCardProps) {
         </p>
 
         <p className="font-sans text-[20px] font-bold text-[var(--text-on-light)] mb-4">
-          ${product.price.toLocaleString()}
+          {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(product.price)}
         </p>
 
         <div className="border-t border-[var(--gold-primary)]/20 pt-4 mt-auto">
