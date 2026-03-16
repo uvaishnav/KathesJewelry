@@ -1,37 +1,70 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { SanityLive } from "@/sanity/lib/live";
-import "./globals.css";
+import type { Metadata } from 'next'
+import { Playfair_Display, Montserrat, Lora } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/react'
+import { JsonLd } from '@/components/shared/JsonLd'
+import { Navbar } from '@/components/layout/Navbar'
+import { Footer } from '@/components/layout/Footer'
+import './globals.css'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-serif',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+})
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+})
+
+const lora = Lora({
+  subsets: ['latin'],
+  variable: '--font-body',
+  display: 'swap',
+  weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
+})
 
 export const metadata: Metadata = {
-  title: "Kathe's Jewelry — East Village NYC Since 1993",
+  metadataBase: new URL('https://kathesjewelry.com'),
+  title: {
+    default: "Kathe's Jewelry | New York's Trusted Jeweler Since 1993",
+    template: "%s | Kathe's Jewelry NYC",
+  },
   description:
-    "Family-owned jewelry store in the East Village, New York. Expert repairs, custom design, estate jewelry, and gold buying by GIA-certified master jeweler Jonas Rueda.",
-};
+    "Custom jewelry design, expert repairs & fine jewelry in NYC's East Village. Family-owned since 1993. GIA-certified gemologist. 4.8★ on Google & Yelp.",
+  openGraph: {
+    type: 'website',
+    siteName: "Kathe's Jewelry",
+    locale: 'en_US',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-        <SanityLive />
+    <html
+      lang="en"
+      className={`${playfair.variable} ${montserrat.variable} ${lora.variable}`}
+    >
+      <body className="antialiased">
+        <JsonLd />
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
+        <Analytics />
       </body>
     </html>
-  );
+  )
 }
