@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState, useEffect, useRef } from 'react'
 import { X, Phone } from 'lucide-react'
 import { AnimatePresence, m, LazyMotion, domAnimation } from 'motion/react'
 
@@ -13,10 +14,60 @@ interface MobileMenuProps {
 
 export function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) {
   const pathname = usePathname()
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  // Handle Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    if (isOpen) {
+      window.addEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'hidden' // Body scroll lock
+    }
+    return () => {
+      window.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = ''
+    }
+  }, [isOpen, onClose])
+
+  // Simple Focus Trap
+  useEffect(() => {
+    if (isOpen && menuRef.current) {
+      const focusableElements = menuRef.current.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+      const firstElement = focusableElements[0] as HTMLElement
+      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
+
+      const handleTab = (e: KeyboardEvent) => {
+        if (e.key !== 'Tab') return
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault()
+            lastElement.focus()
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault()
+            firstElement.focus()
+          }
+        }
+      }
+
+      window.addEventListener('keydown', handleTab)
+      // Focus the first element on open
+      firstElement?.focus()
+
+      return () => window.removeEventListener('keydown', handleTab)
+    }
+  }, [isOpen])
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
-    return pathname.startsWith(href)
+    // Ensure accurate matching for sub-paths
+    return pathname === href || pathname.startsWith(`${href}/`)
   }
 
   return (
@@ -24,6 +75,7 @@ export function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) {
       {isOpen && (
         <LazyMotion features={domAnimation}>
           <m.div
+            ref={menuRef}
             className="fixed inset-0 z-[60] flex flex-col bg-[#111111]"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}

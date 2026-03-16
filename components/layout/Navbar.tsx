@@ -22,6 +22,9 @@ export function Navbar() {
   const pathname = usePathname()
 
   useEffect(() => {
+    // Initial check on mount
+    setScrolled(window.scrollY > 80)
+
     const handler = () => setScrolled(window.scrollY > 80)
     window.addEventListener('scroll', handler, { passive: true })
     return () => window.removeEventListener('scroll', handler)
@@ -41,7 +44,8 @@ export function Navbar() {
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
-    return pathname.startsWith(href)
+    // Ensure accurate matching for sub-paths (e.g. /shop highlights on /shop/[slug])
+    return pathname === href || pathname.startsWith(`${href}/`)
   }
 
   return (
