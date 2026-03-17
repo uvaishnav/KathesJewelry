@@ -1,6 +1,7 @@
 import { StarRating } from './StarRating'
 
 export interface Testimonial {
+  _id?: string
   quote: string
   reviewer: string
   platform: string

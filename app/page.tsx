@@ -1,68 +1,48 @@
+import type { Metadata } from 'next'
+import { sanityClient } from '@/lib/sanity/client'
+import { featuredProductsQuery, testimonialsQuery } from '@/lib/sanity/queries'
+import type { Product } from '@/components/ui/ProductCard'
+import type { Testimonial } from '@/components/ui/TestimonialCard'
 
-import { sanityClient } from '@/lib/sanity/client';
-import groq from 'groq';
-import Link from 'next/link';
-import Image from 'next/image';
-import { urlFor } from '@/sanity/lib/image';
-import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import { Hero } from '@/components/sections/homepage/Hero'
+import { TrustBar } from '@/components/sections/homepage/TrustBar'
+import { ServicesGrid } from '@/components/sections/homepage/ServicesGrid'
+import { CategoryMosaic } from '@/components/sections/homepage/CategoryMosaic'
+import { FeaturedProducts } from '@/components/sections/homepage/FeaturedProducts'
+import { OurStoryStrip } from '@/components/sections/homepage/OurStoryStrip'
+import { Testimonials } from '@/components/sections/homepage/Testimonials'
+import { VisitUs } from '@/components/sections/homepage/VisitUs'
+import { InstagramFeed } from '@/components/sections/homepage/InstagramFeed'
 
-interface Product {
-    _id: string;
-    name: string;
-    slug: {
-        current: string;
-    };
-    images: SanityImageSource[];
-    price: number;
+export const metadata: Metadata = {
+  title: "Kathe's Jewelry | New York's Trusted Jeweler Since 1993",
+  description:
+    "Custom jewelry design, expert repairs & fine jewelry in NYC's East Village. Family-owned since 1993. GIA-certified gemologist. 4.8★ rated on Google & Yelp.",
+  openGraph: {
+    title: "Kathe's Jewelry — East Village NYC",
+    description:
+      "Handcrafted. Trusted. New York's Own. Since 1993. Visit us at 226 1st Ave, East Village.",
+    images: [{ url: '/images/hero-store-interior.webp', width: 1200, height: 630 }],
+  },
 }
 
-const productsQuery = groq`
-    *[_type == "product"] | order(_createdAt desc) [0...4] {
-        _id,
-        name,
-        slug,
-        images,
-        price
-    }
-`;
+export default async function HomePage() {
+  const [products, testimonials] = await Promise.all([
+    sanityClient.fetch<Product[]>(featuredProductsQuery).catch(() => []),
+    sanityClient.fetch<Testimonial[]>(testimonialsQuery).catch(() => []),
+  ])
 
-export default async function Home() {
-    const products: Product[] = await sanityClient.fetch(productsQuery);
-
-    return (
-        <div>
-            <section className="bg-gray-100 py-20 text-center">
-                <h1 className="text-5xl font-bold mb-4">Kathe&apos;s Jewelry</h1>
-                <p className="text-xl text-gray-600">New York&apos;s Trusted Jeweler Since 1993</p>
-            </section>
-            <section className="py-20">
-                <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold text-center mb-12">Featured Products</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                        {products.map((product) => (
-                            <Link key={product._id} href={`/shop/${product.slug.current}`} className="group">
-                                <div className="w-full bg-gray-200 rounded-lg overflow-hidden">
-                                    {product.images && product.images.length > 0 ? (
-                                        <Image
-                                            src={urlFor(product.images[0]).url()}
-                                            alt={product.name}
-                                            width={500}
-                                            height={500}
-                                            className="w-full h-full object-center object-cover group-hover:opacity-75"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-                                            <p>No image available</p>
-                                        </div>
-                                    )}
-                                </div>
-                                <h3 className="mt-4 text-lg font-medium text-gray-900">{product.name}</h3>
-                                <p className="mt-1 text-lg font-medium text-gray-900">${product.price}</p>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </section>
-        </div>
-    );
+  return (
+    <>
+      <Hero />
+      <TrustBar />
+      <ServicesGrid />
+      <CategoryMosaic />
+      <FeaturedProducts products={products} />
+      <OurStoryStrip />
+      <Testimonials testimonials={testimonials} />
+      <VisitUs />
+      <InstagramFeed />
+    </>
+  )
 }
