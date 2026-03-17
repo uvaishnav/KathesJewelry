@@ -38,3 +38,5 @@ next-env.d.ts
 /qa-screenshots
 docs
 .agents
+.agent
+.playwright-mcp

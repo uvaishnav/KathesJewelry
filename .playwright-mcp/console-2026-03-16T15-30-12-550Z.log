@@ -1,3 +1,0 @@
-[    7274ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/shop/test-product:0
-[    8220ms] [WARNING] Image with src "/icons/logo.svg" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading @ http://localhost:3000/_next/static/chunks/82dd4_next_dist_33f429fe._.js:2297
