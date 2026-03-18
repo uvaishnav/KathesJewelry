@@ -5,7 +5,7 @@ import { ScrollReveal } from '@/components/ui/ScrollReveal'
 export function OurStoryStrip() {
   return (
     <section
-      className="bg-[var(--warm-cream)] py-[var(--section-padding)] px-[var(--container-padding)] relative overflow-hidden"
+      className="bg-[var(--warm-cream)] py-[var(--section-padding)] px-[var(--container-padding)] relative overflow-hidden" data-section="light"
       aria-label="Our story"
     >
       {/* Decorative background numeral — invisible watermark */}

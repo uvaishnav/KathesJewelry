@@ -32,7 +32,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
 
   return (
     <section
-      className="bg-white py-[var(--section-padding)] px-[var(--container-padding)]"
+      className="bg-white py-[var(--section-padding)] px-[var(--container-padding)]" data-section="white"
       aria-label="Featured products"
     >
       <div style={{ maxWidth: 'var(--max-width)' }} className="mx-auto">

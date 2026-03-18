@@ -29,14 +29,14 @@ const SERVICES: ServiceCardData[] = [
     icon: Clock,
     title: 'Watch Repair',
     description:
-      'Battery replacements, band adjustments, and professional servicing for all watch brands.',
+      'Battery replacements, band adjustments, and professional servicing for all watch brands and styles.',
     href: '/services#watches',
   },
   {
     icon: Gem,
     title: 'Estate Jewelry',
     description:
-      'A hand-selected collection of estate pieces, vintage finds, and rare gems you won\'t find anywhere else.',
+      "A hand-selected collection of estate pieces, vintage finds, and rare gems you won't find anywhere else.",
     href: '/services#estate',
   },
   {
@@ -63,9 +63,10 @@ export function ServicesGrid() {
           theme="light"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* items-stretch ensures all cards in a row are equal height */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--border-subtle)] border border-[var(--border-subtle)]">
           {SERVICES.map((service, i) => (
-            <ScrollReveal key={service.title} delay={i * 0.08}>
+            <ScrollReveal key={service.title} delay={i * 0.07}>
               <ServiceCard service={service} />
             </ScrollReveal>
           ))}

@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { GoldParticles } from '@/components/ui/GoldParticles'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -42,17 +43,12 @@ export const metadata: Metadata = {
     siteName: "Kathe's Jewelry",
     locale: 'en_US',
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
@@ -60,8 +56,10 @@ export default function RootLayout({
     >
       <body className="antialiased">
         <JsonLd />
+        {/* Gold sparkle particles — follows mouse globally */}
+        <GoldParticles />
         <Navbar />
-        <main>{children}</main>
+        {children}
         <Footer />
         <Analytics />
       </body>
