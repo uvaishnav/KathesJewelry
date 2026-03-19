@@ -37,57 +37,32 @@ export function Navbar() {
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`)
 
-  // Transparent only on homepage before scroll
   const solidBg = !isHomepage || scrolled
 
   return (
     <>
       <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          !solidBg ? 'h-20 bg-transparent' : 'h-16 bg-[#111]/92 backdrop-blur-md'
+        }`}
         style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 50,
-          // Height: taller on homepage hero (gives logo more room), compact when scrolled / on inner pages
-          height: !solidBg ? '5rem' : '4rem',
-          background: solidBg
-            ? 'rgba(17,17,17,0.92)'
-            : 'transparent',
-          backdropFilter: solidBg ? 'blur(12px)' : 'none',
-          boxShadow: solidBg
-            ? '0 1px 0 rgba(201,169,110,0.12), 0 4px 24px rgba(0,0,0,0.35)'
-            : 'none',
-          transition: 'height 0.5s cubic-bezier(0.22,1,0.36,1), background 0.4s ease, box-shadow 0.4s ease',
+          boxShadow: solidBg ? '0 1px 0 rgba(201,169,110,0.12), 0 4px 24px rgba(0,0,0,0.35)' : 'none',
         }}
       >
-        {/* Top gold line — always visible */}
+        {/* Top gold line */}
         <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 1,
-            background: 'linear-gradient(90deg, transparent, rgba(201,169,110,0.5) 50%, transparent)',
-          }}
+          className="absolute top-0 left-0 right-0 h-px"
+          style={{ background: 'linear-gradient(90deg, transparent, rgba(201,169,110,0.5) 50%, transparent)' }}
           aria-hidden="true"
         />
 
         <nav
-          style={{
-            maxWidth: 'var(--max-width)',
-            margin: '0 auto',
-            height: '100%',
-            padding: '0 var(--container-padding)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
+          className="mx-auto flex h-full items-center justify-between"
+          style={{ maxWidth: 'var(--max-width)', padding: '0 var(--container-padding)' }}
           aria-label="Main navigation"
         >
-          {/* Logo — larger on homepage hero, compact when scrolled */}
-          <Link href="/" aria-label="Kathe's Jewelry — Home">
+          {/* Logo */}
+          <Link href="/" aria-label="Kathe's Jewelry — Home" className="shrink-0">
             <Image
               src="/icons/logo.svg"
               alt="Kathe's Jewelry logo"
@@ -96,47 +71,25 @@ export function Navbar() {
               priority
               className="logo-img w-auto"
               style={{
-                height: !solidBg ? '3.25rem' : '2.25rem',
+                height: !solidBg ? '3rem' : '2.25rem',
                 transition: 'height 0.5s cubic-bezier(0.22,1,0.36,1)',
-                transformOrigin: 'left center',
               }}
             />
           </Link>
 
-          {/* Desktop links */}
-          <ul style={{ display: 'flex', alignItems: 'center', gap: '1.75rem', listStyle: 'none', margin: 0, padding: 0 }}
-              className="hidden lg:flex">
+          {/* Desktop nav links — ONLY shown lg+, NO inline display style */}
+          <ul className="hidden lg:flex items-center gap-7 list-none m-0 p-0">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: 12,
-                    fontWeight: 500,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.12em',
-                    color: isActive(link.href) ? 'var(--gold-primary)' : 'rgba(255,255,255,0.82)',
-                    textDecoration: 'none',
-                    position: 'relative',
-                    paddingBottom: 2,
-                    transition: 'color 0.2s ease',
-                  }}
-                  className="group hover:text-[var(--gold-primary)]"
+                  className="group relative font-sans font-medium uppercase text-[12px] tracking-[0.12em] no-underline transition-colors duration-200 pb-0.5"
+                  style={{ color: isActive(link.href) ? 'var(--gold-primary)' : 'rgba(255,255,255,0.82)' }}
                 >
                   {link.label}
-                  {/* Animated underline */}
                   <span
-                    style={{
-                      position: 'absolute',
-                      bottom: -1,
-                      left: 0,
-                      height: 1,
-                      width: isActive(link.href) ? '100%' : '0%',
-                      background: 'var(--gold-primary)',
-                      transition: 'width 0.3s cubic-bezier(0.22,1,0.36,1)',
-                    }}
-                    className="group-hover:!w-full"
+                    className="absolute -bottom-px left-0 h-px bg-[var(--gold-primary)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full"
+                    style={{ width: isActive(link.href) ? '100%' : '0%' }}
                     aria-hidden="true"
                   />
                 </Link>
@@ -144,39 +97,31 @@ export function Navbar() {
             ))}
           </ul>
 
-          {/* Phone CTA */}
+          {/* Desktop phone CTA — ONLY shown lg+ */}
           <a
             href="tel:+12124752986"
-            className="btn-shimmer hidden lg:flex items-center gap-2"
+            className="btn-shimmer hidden lg:flex items-center gap-2 font-sans font-semibold uppercase text-[11px] tracking-[0.18em] shrink-0"
             style={{
-              fontFamily: 'var(--font-sans)',
-              fontSize: 11,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.18em',
               color: '#111',
               background: 'var(--gold-primary)',
               padding: '0.625rem 1.25rem',
               textDecoration: 'none',
               transition: 'background 0.2s ease',
-              flexShrink: 0,
-              position: 'relative',
-              overflow: 'hidden',
             }}
             aria-label="Call Kathe's Jewelry"
           >
-            <Phone style={{ width: 14, height: 14 }} aria-hidden="true" />
+            <Phone className="w-3.5 h-3.5" aria-hidden="true" />
             (212) 475-2986
           </a>
 
-          {/* Mobile hamburger */}
+          {/* Mobile hamburger — ONLY shown below lg */}
           <button
-            style={{ color: 'white', padding: 8, background: 'none', border: 'none', cursor: 'pointer' }}
-            className="lg:hidden"
+            className="flex lg:hidden items-center justify-center p-2 text-white"
+            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
             onClick={() => setMenuOpen(true)}
             aria-label="Open navigation menu"
           >
-            <Menu style={{ width: 24, height: 24 }} />
+            <Menu className="w-6 h-6" />
           </button>
         </nav>
       </header>

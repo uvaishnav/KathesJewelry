@@ -175,7 +175,7 @@ export function VisitUs() {
           </div>
 
           {/* Right — Google Map */}
-          <div className="w-full overflow-hidden" style={{ height: '480px' }}>
+          <div className="w-full overflow-hidden aspect-video lg:aspect-auto lg:h-[480px]">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3023.1547!2d-73.98076!3d40.73176!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25990a5f6f4ad%3A0x4a52b4e2c06b3e52!2sKathe&#39;s%20Jewelry!5e0!3m2!1sen!2sus!4v1"
               className="w-full h-full border-0"

@@ -327,3 +327,34 @@ img:not(.logo-img) {
   .trust-badge-pulse { animation: none; }
   .svg-draw { stroke-dashoffset: 0; animation: none; }
 }
+
+/* ─── Mobile-responsive fixes ────────────────────────────────── */
+
+/* Ensure next/image fill containers always render on mobile */
+[data-mobile-image] {
+  position: relative;
+  min-height: 240px;
+}
+
+/* Hero scroll indicator centering */
+.hero-scroll-indicator {
+  transform: translateX(-50%);
+}
+
+/* Prevent horizontal overflow on all sections */
+section {
+  overflow-x: hidden;
+}
+
+/* Marquee track — prevent overflow on narrow screens */
+.marquee-track {
+  min-width: max-content;
+}
+
+/* Mobile testimonial card minimum width */
+@media (max-width: 768px) {
+  .marquee-track > a {
+    min-width: 300px;
+    max-width: 85vw;
+  }
+}
