@@ -14,7 +14,7 @@ export function ServiceCard({ service }: { service: ServiceCardData }) {
   const isExternal = service.href.startsWith('tel:') || service.href.startsWith('mailto:')
 
   const sharedClass = `
-    group relative flex flex-col h-full bg-white border border-[var(--border-subtle)]
+    group card-shine relative flex flex-col h-full bg-white border border-[var(--border-subtle)]
     p-7 md:p-8 overflow-hidden
     hover:shadow-[0_16px_48px_rgba(0,0,0,0.10)]
     transition-shadow duration-[280ms] ease-[var(--spring-ease)]

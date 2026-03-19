@@ -99,7 +99,7 @@ function TileLink({
   return (
     <Link
       href={tile.href}
-      className={`group relative overflow-hidden block ${className}`}
+      className={`group card-shine relative overflow-hidden block ${className}`}
       aria-label={`Shop ${tile.name}`}
     >
       {/* Background Image */}

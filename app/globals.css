@@ -185,3 +185,145 @@ img:not(.logo-img) {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE 4 POLISH — Premium Interactions & Animations
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Button shimmer sweep ─────────────────────────────────────── */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 100%
+  );
+  skewX: -20deg;
+  transition: none;
+  pointer-events: none;
+}
+.btn-shimmer:hover::before {
+  animation: btnShimmer 0.55s ease forwards;
+}
+@keyframes btnShimmer {
+  0%   { left: -100%; }
+  100% { left: 160%; }
+}
+
+/* ── Card gold-glow hover ─────────────────────────────────────── */
+.card-shine {
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 40%,
+    rgba(201, 169, 110, 0.08) 50%,
+    transparent 60%
+  );
+  background-size: 300% 300%;
+  background-position: 0% 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease, background-position 0.6s ease;
+  pointer-events: none;
+}
+.card-shine:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow:
+    0 0 0 1px rgba(201, 169, 110, 0.25),
+    0 8px 32px rgba(201, 169, 110, 0.12),
+    0 24px 64px rgba(0, 0, 0, 0.15);
+}
+.card-shine:hover::after {
+  opacity: 1;
+  background-position: 100% 50%;
+  animation: cardShimmer 0.7s ease forwards;
+}
+@keyframes cardShimmer {
+  0%   { background-position: 0% 50%; opacity: 0; }
+  30%  { opacity: 1; }
+  100% { background-position: 200% 50%; opacity: 0; }
+}
+
+/* ── Clip-path section reveal (Apple-style) ──────────────────── */
+.clip-reveal {
+  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+  transition:
+    clip-path 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease;
+}
+.clip-reveal.in-view {
+  clip-path: inset(0 0 0% 0);
+  opacity: 1;
+}
+
+/* ── Infinite horizontal marquee (testimonials) ──────────────── */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 38s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+@keyframes marqueeScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Staggered word-by-word entrance for hero H1 ─────────────── */
+.hero-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(32px) scale(0.95);
+  animation: wordEntrance 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes wordEntrance {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Hero trust badge pulse ──────────────────────────────────── */
+.trust-badge-pulse {
+  animation: badgePulse 2.5s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 110, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(201, 169, 110, 0); }
+}
+
+/* ── Service SVG draw-in animation ──────────────────────────── */
+.svg-draw {
+  stroke-dashoffset: 600;
+  stroke-dasharray: 600;
+  animation: svgDraw 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes svgDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ── Reduced motion overrides ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none !important; }
+  .hero-word     { animation: none !important; opacity: 1; transform: none; }
+  .clip-reveal   { clip-path: none !important; opacity: 1 !important; }
+  .btn-shimmer::before,
+  .card-shine::after { display: none; }
+  .trust-badge-pulse { animation: none; }
+  .svg-draw { stroke-dashoffset: 0; animation: none; }
+}

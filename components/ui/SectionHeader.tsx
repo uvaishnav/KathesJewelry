@@ -1,3 +1,5 @@
+import { ClipReveal } from '@/components/ui/ScrollReveal'
+
 interface SectionHeaderProps {
   eyebrow?: string
   heading: string
@@ -19,32 +21,54 @@ export function SectionHeader({
   return (
     <div className={`mb-16 ${isCenter ? 'text-center' : 'text-left'}`}>
       {eyebrow && (
-        <span className="font-sans text-[11px] tracking-[3px] text-[var(--gold-primary)] uppercase mb-4 block">
-          {eyebrow}
-        </span>
+        <ClipReveal delay={0}>
+          <span
+            className="font-sans uppercase block mb-4"
+            style={{
+              fontSize: 11,
+              letterSpacing: '0.28em',
+              color: 'var(--gold-primary)',
+            }}
+          >
+            {eyebrow}
+          </span>
+        </ClipReveal>
       )}
 
-      {/* Gold divider — only on left-aligned sections */}
+      {/* Gold divider — left-aligned only */}
       {!isCenter && (
-        <div className="w-16 h-[2px] bg-[var(--gold-primary)] mb-6" />
+        <div
+          className="bg-[var(--gold-primary)] mb-6"
+          style={{ width: 64, height: 2 }}
+          aria-hidden="true"
+        />
       )}
 
-      <h2
-        className={`font-serif text-[clamp(1.8rem,4vw,3.25rem)] font-semibold leading-[1.15] tracking-tight mb-5 ${
-          isDark ? 'text-white' : 'text-[var(--text-on-light)]'
-        }`}
-      >
-        {heading}
-      </h2>
+      <ClipReveal delay={eyebrow ? 0.08 : 0}>
+        <h2
+          className="font-serif font-semibold leading-[1.12] tracking-tight mb-5"
+          style={{
+            fontSize: 'clamp(1.8rem, 4vw, 3.25rem)',
+            color: isDark ? 'white' : 'var(--text-on-light)',
+          }}
+        >
+          {heading}
+        </h2>
+      </ClipReveal>
 
       {subtext && (
-        <p
-          className={`font-body text-[17px] leading-[1.85] max-w-[600px] ${
-            isCenter ? 'mx-auto' : ''
-          } ${isDark ? 'text-[var(--text-muted)]' : 'text-[var(--text-secondary)]'}`}
-        >
-          {subtext}
-        </p>
+        <ClipReveal delay={eyebrow ? 0.14 : 0.07}>
+          <p
+            className={`font-body leading-[1.85] ${isCenter ? 'mx-auto' : ''}`}
+            style={{
+              fontSize: 17,
+              maxWidth: 580,
+              color: isDark ? 'var(--text-muted)' : 'var(--text-secondary)',
+            }}
+          >
+            {subtext}
+          </p>
+        </ClipReveal>
       )}
     </div>
   )

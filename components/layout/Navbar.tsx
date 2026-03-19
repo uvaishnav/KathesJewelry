@@ -8,25 +8,23 @@ import { Phone, Menu } from 'lucide-react'
 import { MobileMenu } from './MobileMenu'
 
 const NAV_LINKS = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/about-us' },
+  { label: 'Home',     href: '/' },
+  { label: 'About',    href: '/about-us' },
   { label: 'Services', href: '/services' },
-  { label: 'Shop', href: '/shop' },
-  { label: 'FAQ', href: '/faq' },
-  { label: 'Contact', href: '/contact-us' },
+  { label: 'Shop',     href: '/shop' },
+  { label: 'FAQ',      href: '/faq' },
+  { label: 'Contact',  href: '/contact-us' },
 ] as const
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
-
-  // Only the homepage gets the transparent/expanded treatment
   const isHomepage = pathname === '/'
 
   useEffect(() => {
     const check = () => setScrolled(window.scrollY > 60)
-    check() // run on mount
+    check()
     window.addEventListener('scroll', check, { passive: true })
     return () => window.removeEventListener('scroll', check)
   }, [])
@@ -39,63 +37,106 @@ export function Navbar() {
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`)
 
-  // On homepage: transparent until scrolled. On all other pages: always solid.
+  // Transparent only on homepage before scroll
   const solidBg = !isHomepage || scrolled
-
-  // Text color: white always works on dark bg. On inner pages (light bg) we still use
-  // solid dark navbar so white text is fine.
-  const navTextClass = solidBg
-    ? 'text-white/85 hover:text-[var(--gold-primary)]'
-    : 'text-white/90 hover:text-[var(--gold-primary)]'
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          solidBg
-            ? 'h-16 bg-[#111]/92 backdrop-blur-md shadow-[0_1px_0_rgba(201,169,110,0.15),0_4px_24px_rgba(0,0,0,0.4)]'
-            : 'h-20 bg-transparent'
-        }`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          // Height: taller on homepage hero (gives logo more room), compact when scrolled / on inner pages
+          height: !solidBg ? '5rem' : '4rem',
+          background: solidBg
+            ? 'rgba(17,17,17,0.92)'
+            : 'transparent',
+          backdropFilter: solidBg ? 'blur(12px)' : 'none',
+          boxShadow: solidBg
+            ? '0 1px 0 rgba(201,169,110,0.12), 0 4px 24px rgba(0,0,0,0.35)'
+            : 'none',
+          transition: 'height 0.5s cubic-bezier(0.22,1,0.36,1), background 0.4s ease, box-shadow 0.4s ease',
+        }}
       >
-        {/* Thin gold top border — always visible */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[var(--gold-primary)]/50 to-transparent" aria-hidden="true" />
+        {/* Top gold line — always visible */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 1,
+            background: 'linear-gradient(90deg, transparent, rgba(201,169,110,0.5) 50%, transparent)',
+          }}
+          aria-hidden="true"
+        />
 
         <nav
-          className="mx-auto flex h-full max-w-[1280px] items-center justify-between px-[clamp(20px,5vw,80px)]"
+          style={{
+            maxWidth: 'var(--max-width)',
+            margin: '0 auto',
+            height: '100%',
+            padding: '0 var(--container-padding)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
           aria-label="Main navigation"
         >
-          {/* Logo — compact always; no more giant scaling that overlaps content */}
-          <Link href="/" aria-label="Kathe's Jewelry — Home" className="relative flex items-center shrink-0">
+          {/* Logo — larger on homepage hero, compact when scrolled */}
+          <Link href="/" aria-label="Kathe's Jewelry — Home">
             <Image
               src="/icons/logo.svg"
-              alt="Kathe's Jewelry logo — East Village NYC"
-              width={160}
-              height={80}
-              className={`logo-img w-auto transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] origin-left ${
-                solidBg ? 'h-9' : 'h-11'
-              }`}
+              alt="Kathe's Jewelry logo"
+              width={200}
+              height={100}
               priority
+              className="logo-img w-auto"
+              style={{
+                height: !solidBg ? '3.25rem' : '2.25rem',
+                transition: 'height 0.5s cubic-bezier(0.22,1,0.36,1)',
+                transformOrigin: 'left center',
+              }}
             />
           </Link>
 
-          {/* Desktop Nav */}
-          <ul className="hidden items-center gap-7 lg:flex">
+          {/* Desktop links */}
+          <ul style={{ display: 'flex', alignItems: 'center', gap: '1.75rem', listStyle: 'none', margin: 0, padding: 0 }}
+              className="hidden lg:flex">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`font-sans text-[12px] font-medium uppercase tracking-[1.5px] transition-colors duration-200 relative group ${
-                    isActive(link.href)
-                      ? 'text-[var(--gold-primary)]'
-                      : navTextClass
-                  }`}
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: 12,
+                    fontWeight: 500,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.12em',
+                    color: isActive(link.href) ? 'var(--gold-primary)' : 'rgba(255,255,255,0.82)',
+                    textDecoration: 'none',
+                    position: 'relative',
+                    paddingBottom: 2,
+                    transition: 'color 0.2s ease',
+                  }}
+                  className="group hover:text-[var(--gold-primary)]"
                 >
                   {link.label}
-                  {/* Animated gold underline */}
+                  {/* Animated underline */}
                   <span
-                    className={`absolute -bottom-1 left-0 h-px bg-[var(--gold-primary)] transition-all duration-300 ${
-                      isActive(link.href) ? 'w-full' : 'w-0 group-hover:w-full'
-                    }`}
+                    style={{
+                      position: 'absolute',
+                      bottom: -1,
+                      left: 0,
+                      height: 1,
+                      width: isActive(link.href) ? '100%' : '0%',
+                      background: 'var(--gold-primary)',
+                      transition: 'width 0.3s cubic-bezier(0.22,1,0.36,1)',
+                    }}
+                    className="group-hover:!w-full"
                     aria-hidden="true"
                   />
                 </Link>
@@ -106,23 +147,36 @@ export function Navbar() {
           {/* Phone CTA */}
           <a
             href="tel:+12124752986"
-            className="hidden items-center gap-2 bg-[var(--gold-primary)] px-5 py-2.5
-                       font-sans text-[11px] font-semibold uppercase tracking-[2px] text-[#111]
-                       transition-all duration-200 hover:bg-[var(--gold-light)]
-                       lg:flex shrink-0"
+            className="btn-shimmer hidden lg:flex items-center gap-2"
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: 11,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.18em',
+              color: '#111',
+              background: 'var(--gold-primary)',
+              padding: '0.625rem 1.25rem',
+              textDecoration: 'none',
+              transition: 'background 0.2s ease',
+              flexShrink: 0,
+              position: 'relative',
+              overflow: 'hidden',
+            }}
             aria-label="Call Kathe's Jewelry"
           >
-            <Phone className="h-3.5 w-3.5" aria-hidden="true" />
+            <Phone style={{ width: 14, height: 14 }} aria-hidden="true" />
             (212) 475-2986
           </a>
 
           {/* Mobile hamburger */}
           <button
-            className="p-2 text-white lg:hidden"
+            style={{ color: 'white', padding: 8, background: 'none', border: 'none', cursor: 'pointer' }}
+            className="lg:hidden"
             onClick={() => setMenuOpen(true)}
             aria-label="Open navigation menu"
           >
-            <Menu className="h-6 w-6" />
+            <Menu style={{ width: 24, height: 24 }} />
           </button>
         </nav>
       </header>
