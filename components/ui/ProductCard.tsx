@@ -22,7 +22,7 @@ export interface ProductCardProps {
 export function ProductCard({ product, onEnquire }: ProductCardProps) {
   return (
     <div
-      className="group bg-white shadow-[0_2px_20px_rgba(0,0,0,0.06)]
+      className="group card-shine bg-white shadow-[0_2px_20px_rgba(0,0,0,0.06)]
                  hover:shadow-[0_12px_48px_rgba(0,0,0,0.12)]
                  hover:-translate-y-1
                  transition-all duration-[240ms] ease-[cubic-bezier(0.22,1,0.36,1)]

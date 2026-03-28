@@ -2,7 +2,6 @@
 
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { StarRating } from '@/components/ui/StarRating'
-import { ScrollReveal } from '@/components/ui/ScrollReveal'
 import { Button } from '@/components/ui/Button'
 import type { Testimonial } from '@/components/ui/TestimonialCard'
 
@@ -10,131 +9,111 @@ interface TestimonialsProps {
   testimonials: Testimonial[]
 }
 
-// ── Featured large quote (center) ────────────────────────────
-function FeaturedQuote({ t }: { t: Testimonial }) {
+// Fallback testimonials to ensure marquee never runs empty
+const FALLBACK: Testimonial[] = [
+  {
+    _id: 'f1',
+    quote: "I brought in a ring that had been in my family for decades. Jonas treated it like it was his own. There was literally no way to tell it had ever been touched. I cried when I picked it up.",
+    reviewer: 'Eve L.',
+    platform: 'Yelp',
+    sourceURL: 'https://www.yelp.com/biz/kathes-jewelry-new-york',
+  },
+  {
+    _id: 'f2',
+    quote: "Kathe sat with me for over an hour going through design options for my engagement ring. The finished ring was beyond anything I imagined — my fiancée hasn't stopped showing it to everyone.",
+    reviewer: 'Candida C.',
+    platform: 'Yelp',
+    sourceURL: 'https://www.yelp.com/biz/kathes-jewelry-new-york',
+  },
+  {
+    _id: 'f3',
+    quote: "They fixed my gold bracelet on the spot for $20. When I asked why it was so cheap, Jonas just smiled and said — that's the right price. I've sent every friend I have to this store.",
+    reviewer: 'Nomin M.',
+    platform: 'Yelp',
+    sourceURL: 'https://www.yelp.com/biz/kathes-jewelry-new-york',
+  },
+  {
+    _id: 'f4',
+    quote: "Honest pricing. No games. Best offer I got in the city for my gold chain. Jonas explained every step of the evaluation. I walked out happy and I'll be back.",
+    reviewer: 'Marcus D.',
+    platform: 'Google',
+    sourceURL: 'https://www.yelp.com/biz/kathes-jewelry-new-york',
+  },
+]
+
+function TestimonialSlide({ t }: { t: Testimonial }) {
   return (
-    <div className="relative flex flex-col justify-between p-8 md:p-10 bg-[var(--dark-card)] border border-[var(--gold-primary)]/20 h-full">
-      {/* Decorative open-quote */}
-      <span
-        className="absolute top-4 left-6 font-serif leading-none select-none pointer-events-none"
-        style={{ fontSize: '7rem', color: 'rgba(201,169,110,0.10)' }}
-        aria-hidden="true"
-      >
-        &ldquo;
-      </span>
-
-      <div className="relative z-10">
-        {/* Stars */}
-        <StarRating rating={5} size="md" />
-
-        {/* Quote — larger, more editorial */}
-        <blockquote
-          className="font-serif italic leading-[1.75] text-white mt-5 mb-6"
-          style={{ fontSize: 'clamp(1.05rem, 2vw, 1.25rem)' }}
-        >
-          &ldquo;{t.quote}&rdquo;
-        </blockquote>
-      </div>
-
-      {/* Reviewer footer */}
-      <div className="flex items-center justify-between gap-4 pt-5 border-t border-[var(--gold-primary)]/15 relative z-10">
-        <div>
-          <p className="font-sans text-[11px] tracking-[2px] uppercase text-[var(--gold-primary)] mb-0.5">
-            {t.reviewer}
-          </p>
-          <p className="font-body text-[12px] text-[var(--text-muted)] italic">Verified Customer</p>
-        </div>
-        {t.sourceURL && (
-          <a
-            href={t.sourceURL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-sans text-[10px] tracking-[1.5px] uppercase text-[var(--text-muted)]
-                       hover:text-[var(--gold-primary)] transition-colors duration-200 shrink-0"
-          >
-            {t.platform} →
-          </a>
-        )}
-      </div>
-    </div>
-  )
-}
-
-// ── Side compact card ─────────────────────────────────────────
-function SideCard({ t, side }: { t: Testimonial; side: 'left' | 'right' }) {
-  return (
-    <div className={`relative flex flex-col justify-between p-6 md:p-7 bg-[var(--dark-card)] h-full border-${side === 'left' ? 'r' : 'l'} border-[var(--gold-primary)]/10`}>
-      {/* Gold accent dot */}
-      <div className="w-6 h-[2px] bg-[var(--gold-primary)]/60 mb-4" aria-hidden="true" />
-
-      <div className="flex-1">
+    <a
+      href={t.sourceURL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="card-shine group block shrink-0 bg-[var(--dark-card)] border border-[var(--gold-primary)]/12 p-7 no-underline"
+      style={{ width: 360, marginRight: 20 }}
+      aria-label={`Read ${t.reviewer}'s ${t.platform} review`}
+    >
+      {/* Stars */}
+      <div className="flex items-center gap-2 mb-4">
         <StarRating rating={5} size="sm" />
-        <blockquote className="font-serif italic text-[15px] text-white/80 leading-[1.7] mt-3 mb-4">
-          &ldquo;{t.quote}&rdquo;
-        </blockquote>
+        <span
+          className="font-sans uppercase"
+          style={{ fontSize: 9, letterSpacing: '0.2em', color: 'var(--text-muted)' }}
+        >
+          {t.platform}
+        </span>
       </div>
 
-      <div className="pt-4 border-t border-white/5">
-        <p className="font-sans text-[10px] tracking-[2px] uppercase text-[var(--gold-primary)]">
+      {/* Quote */}
+      <blockquote
+        className="font-serif italic text-white/85 leading-[1.7] mb-5"
+        style={{ fontSize: 15 }}
+      >
+        &ldquo;{t.quote}&rdquo;
+      </blockquote>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-4 border-t border-white/6">
+        <span
+          className="font-sans uppercase"
+          style={{ fontSize: 10, letterSpacing: '0.2em', color: 'var(--gold-primary)' }}
+        >
           {t.reviewer}
-        </p>
-        {t.sourceURL && (
-          <a
-            href={t.sourceURL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-body text-[12px] text-[var(--text-muted)] hover:text-[var(--gold-primary)] transition-colors mt-0.5 block"
-          >
-            {t.platform} Review →
-          </a>
-        )}
+        </span>
+        <span
+          className="font-sans opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          style={{ fontSize: 10, color: 'var(--text-muted)' }}
+        >
+          Read on {t.platform} →
+        </span>
       </div>
-    </div>
-  )
-}
-
-// ── Skeleton ──────────────────────────────────────────────────
-function Skeleton({ featured }: { featured?: boolean }) {
-  return (
-    <div className={`bg-[var(--dark-card)] border border-white/5 animate-pulse h-full p-${featured ? '10' : '7'}`}>
-      <div className="h-4 bg-white/10 rounded w-1/4 mb-6" />
-      <div className="space-y-2.5 mb-6">
-        <div className="h-3 bg-white/10 rounded w-full" />
-        <div className="h-3 bg-white/10 rounded w-[88%]" />
-        <div className="h-3 bg-white/10 rounded w-[72%]" />
-        {featured && <div className="h-3 bg-white/10 rounded w-[60%]" />}
-      </div>
-      <div className="h-px bg-white/5 mb-4" />
-      <div className="h-3 bg-white/10 rounded w-1/3" />
-    </div>
+    </a>
   )
 }
 
 export function Testimonials({ testimonials }: TestimonialsProps) {
-  const has = testimonials && testimonials.length > 0
-
-  // ─── 3-column layout ──
-  // [ side card ] [ FEATURED — tall ] [ side card ]
-  // On mobile: stack vertically
-  const [left, center, right] = has ? testimonials : []
+  const items = testimonials?.length >= 3 ? testimonials : FALLBACK
+  // Duplicate for seamless loop
+  const doubled = [...items, ...items, ...items]
 
   return (
     <section
-      className="bg-[var(--dark-base)] py-[var(--section-padding)] px-[var(--container-padding)] relative overflow-hidden"
+      className="bg-[var(--dark-base)] py-[var(--section-padding)] relative overflow-hidden"
       data-section="dark"
       aria-label="Customer testimonials"
     >
-      {/* Atmospheric background gradient */}
+      {/* Top atmospheric gradient */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background:
-            'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(201,169,110,0.05) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse 70% 40% at 50% 0%, rgba(201,169,110,0.06) 0%, transparent 70%)',
         }}
         aria-hidden="true"
       />
 
-      <div style={{ maxWidth: 'var(--max-width)' }} className="mx-auto relative z-10">
+      <div
+        style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}
+        className="px-[var(--container-padding)] relative z-10"
+      >
+        {/* Header */}
         <SectionHeader
           eyebrow="Real New Yorkers. Real Experiences."
           heading="Don't Take Our Word For It."
@@ -146,56 +125,67 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
         {/* Aggregate rating */}
         <div className="flex flex-col items-center gap-2 mb-14 -mt-10">
           <StarRating rating={5} size="md" />
-          <p className="font-sans text-[11px] tracking-[2px] uppercase text-[var(--text-muted)]">
+          <p
+            className="font-sans uppercase"
+            style={{ fontSize: 11, letterSpacing: '0.18em', color: 'var(--text-muted)' }}
+          >
             4.8 out of 5 &nbsp;·&nbsp; Google · Yelp · TrustAnalytica
           </p>
         </div>
+      </div>
 
-        {/* 3-column grid — equal height via grid rows */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr_1fr] gap-px bg-[var(--gold-primary)]/10">
-          {has ? (
-            <>
-              {/* Left side card */}
-              <ScrollReveal delay={0} direction="left">
-                <SideCard t={left} side="left" />
-              </ScrollReveal>
+      {/* ── Infinite scrolling marquee — edge-to-edge ── */}
+      <div
+        className="relative overflow-hidden"
+        style={{ marginBottom: '4rem' }}
+        aria-hidden="true"
+      >
+        {/* Left fade mask */}
+        <div
+          className="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
+          style={{
+            width: 120,
+            background: 'linear-gradient(to right, var(--dark-base), transparent)',
+          }}
+        />
+        {/* Right fade mask */}
+        <div
+          className="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
+          style={{
+            width: 120,
+            background: 'linear-gradient(to left, var(--dark-base), transparent)',
+          }}
+        />
 
-              {/* Center featured */}
-              <ScrollReveal delay={0.1} direction="scale">
-                <FeaturedQuote t={center} />
-              </ScrollReveal>
-
-              {/* Right side card */}
-              <ScrollReveal delay={0.2} direction="right">
-                <SideCard t={right} side="right" />
-              </ScrollReveal>
-            </>
-          ) : (
-            <>
-              <Skeleton />
-              <Skeleton featured />
-              <Skeleton />
-            </>
-          )}
+        <div className="marquee-track" style={{ paddingLeft: 40 }}>
+          {doubled.map((t, i) => (
+            <TestimonialSlide key={`${t._id ?? i}-${i}`} t={t} />
+          ))}
         </div>
+      </div>
 
-        {/* CTA row */}
-        <div className="mt-14 text-center">
-          <p className="font-body italic text-[var(--text-muted)] text-[15px] mb-8">
-            Hundreds of five-star stories — and counting. Yours could be next.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button
-              variant="ghost"
-              href="https://www.yelp.com/biz/kathes-jewelry-new-york"
-              external
-            >
-              Read All Reviews on Yelp
-            </Button>
-            <Button variant="primary" href="/contact-us">
-              Book a Service Today
-            </Button>
-          </div>
+      {/* CTA row */}
+      <div
+        className="text-center"
+        style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '0 var(--container-padding)' }}
+      >
+        <p
+          className="font-body italic mb-8"
+          style={{ color: 'var(--text-muted)', fontSize: 15 }}
+        >
+          Hundreds of five-star stories — and counting. Yours could be next.
+        </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Button
+            variant="ghost"
+            href="https://www.yelp.com/biz/kathes-jewelry-new-york"
+            external
+          >
+            Read All Reviews on Yelp
+          </Button>
+          <Button variant="primary" href="/contact-us">
+            Book a Service Today
+          </Button>
         </div>
       </div>
     </section>

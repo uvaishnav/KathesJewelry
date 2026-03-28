@@ -27,7 +27,7 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
   const hasValidUrl = isValidUrl(testimonial.sourceURL)
 
   return (
-    <div className="bg-[var(--dark-card)] border-l-4 border-[var(--gold-primary)] p-6 md:p-8">
+    <div className="card-shine bg-[var(--dark-card)] border-l-4 border-[var(--gold-primary)] p-6 md:p-8">
       {/* Quote */}
       <blockquote className="font-serif italic text-[17px] text-white/90 leading-[1.7] mb-5">
         &ldquo;{testimonial.quote}&rdquo;

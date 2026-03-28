@@ -14,16 +14,27 @@ export interface ButtonProps {
   'aria-label'?: string
 }
 
-const base = 'inline-flex items-center justify-center gap-2 font-sans font-semibold text-[12px] tracking-[2px] uppercase transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+const base =
+  'btn-shimmer inline-flex items-center justify-center gap-2 font-sans font-semibold text-[12px] tracking-[2px] uppercase transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
 
 const variants: Record<ButtonVariant, string> = {
-  primary: `${base} bg-[var(--gold-primary)] text-[#111] px-8 py-4 hover:bg-[var(--gold-light)] shadow-[0_0_30px_rgba(201,169,110,0.15)]`,
+  primary:
+    `${base} bg-[var(--gold-primary)] text-[#111] px-8 py-4
+     hover:bg-[var(--gold-light)]
+     shadow-[0_0_0_0_rgba(201,169,110,0)]
+     hover:shadow-[0_0_24px_rgba(201,169,110,0.35),0_4px_16px_rgba(0,0,0,0.2)]`,
 
-  ghost: `${base} border border-[var(--gold-primary)] text-[var(--gold-primary)] px-8 py-4 hover:bg-[var(--gold-primary)] hover:text-[#111]`,
+  ghost:
+    `${base} border border-[var(--gold-primary)] text-[var(--gold-primary)] px-8 py-4
+     hover:bg-[var(--gold-primary)] hover:text-[#111]
+     hover:shadow-[0_0_20px_rgba(201,169,110,0.3)]`,
 
-  'dark-ghost': `${base} border border-[#1A1A1A] text-[#1A1A1A] px-8 py-4 hover:bg-[#1A1A1A] hover:text-white`,
+  'dark-ghost':
+    `${base} border border-[#1A1A1A] text-[#1A1A1A] px-8 py-4
+     hover:bg-[#1A1A1A] hover:text-white`,
 
-  text: `${base} text-[var(--gold-primary)] hover:underline underline-offset-4`,
+  text:
+    `${base} text-[var(--gold-primary)] hover:underline underline-offset-4`,
 }
 
 export function Button({
