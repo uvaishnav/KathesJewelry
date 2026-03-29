@@ -9,14 +9,14 @@ interface ScrollRevealProps {
   delay?: number
   direction?: 'up' | 'left' | 'right' | 'scale' | 'fade'
   duration?: number
-  /**
-   * once: true  → animate in once, stay visible (SAFE default)
-   * once: false → re-animates on every viewport entry (use sparingly)
-   */
   once?: boolean
   amount?: number
 }
 
+/**
+ * ScrollReveal — Framer Motion whileInView wrapper.
+ * once:true (default) — safe, no SSR hydration issues for below-fold content.
+ */
 export function ScrollReveal({
   children,
   className,
@@ -34,9 +34,9 @@ export function ScrollReveal({
 
   const initial = {
     opacity: 0,
-    y: direction === 'up' ? 24 : 0,
-    x: direction === 'left' ? -24 : direction === 'right' ? 24 : 0,
-    scale: direction === 'scale' ? 0.94 : direction === 'up' ? 0.97 : 1,
+    y: direction === 'up' ? 28 : 0,
+    x: direction === 'left' ? -28 : direction === 'right' ? 28 : 0,
+    scale: direction === 'scale' ? 0.93 : 1,
     filter: direction === 'fade' ? 'blur(6px)' : undefined,
   }
 
@@ -55,11 +55,7 @@ export function ScrollReveal({
         initial={initial}
         whileInView={animate}
         viewport={{ once, amount, margin: '-40px 0px' }}
-        transition={{
-          duration,
-          delay,
-          ease: [0.22, 1, 0.36, 1],
-        }}
+        transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
       >
         {children}
       </m.div>
@@ -68,8 +64,67 @@ export function ScrollReveal({
 }
 
 /**
+ * RevealOnScroll — CSS-class approach via IntersectionObserver.
+ * Renders content VISIBLE on SSR (no flash). Adds .revealed class
+ * when element enters viewport, triggering CSS transition.
+ * Most reliable approach for any viewport position.
+ */
+export function RevealOnScroll({
+  children,
+  className = '',
+  delay = 0,
+  y = 24,
+}: {
+  children: React.ReactNode
+  className?: string
+  delay?: number
+  y?: number
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const shouldReduceMotion = useReducedMotion()
+  // Start VISIBLE — SSR renders correctly, no flash of invisible content
+  const [revealed, setRevealed] = useState(true)
+
+  useEffect(() => {
+    if (shouldReduceMotion) return
+    const el = ref.current
+    if (!el) return
+
+    // Start hidden only after mount (client-side only)
+    setRevealed(false)
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // Small timeout to ensure CSS transition fires
+          const t = setTimeout(() => setRevealed(true), 16)
+          observer.disconnect()
+          return () => clearTimeout(t)
+        }
+      },
+      { threshold: 0.05, rootMargin: '0px 0px -40px 0px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [shouldReduceMotion])
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: revealed ? 1 : 0,
+        transform: revealed ? 'translateY(0px)' : `translateY(${y}px)`,
+        transition: `opacity 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+/**
  * ClipReveal — Apple-style clip-path text entrance.
- * Uses IntersectionObserver directly (most reliable, zero hydration issues).
  */
 export function ClipReveal({
   children,
@@ -111,51 +166,5 @@ export function ClipReveal({
   )
 }
 
-/**
- * FadeOnScroll — lightweight CSS-only fade via IntersectionObserver.
- * Zero Framer Motion overhead. Most reliable for simple reveals.
- */
-export function FadeOnScroll({
-  children,
-  className,
-  delay = 0,
-}: {
-  children: React.ReactNode
-  className?: string
-  delay?: number
-}) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
-  const shouldReduceMotion = useReducedMotion()
-
-  useEffect(() => {
-    if (shouldReduceMotion) { setVisible(true); return }
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true)
-          observer.disconnect()
-        }
-      },
-      { rootMargin: '-32px', threshold: 0.05 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [shouldReduceMotion])
-
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(20px)',
-        transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
-      }}
-    >
-      {children}
-    </div>
-  )
-}
+// Legacy alias — keep existing imports working
+export { RevealOnScroll as FadeOnScroll }

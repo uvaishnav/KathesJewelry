@@ -9,7 +9,10 @@ export function InstagramFeed() {
       className="relative py-[var(--section-padding)] px-[var(--container-padding)]"
       style={{
         backgroundColor: 'var(--dark-base)',
-        backgroundImage: 'radial-gradient(ellipse at 85% 15%, rgba(201,169,110,0.05) 0%, transparent 45%)',
+        backgroundImage: [
+          'radial-gradient(ellipse at 85% 10%, rgba(201,169,110,0.12) 0%, transparent 48%)',
+          'radial-gradient(ellipse at 10% 90%, rgba(201,169,110,0.10) 0%, transparent 45%)',
+        ].join(', '),
       }}
       aria-label="Instagram feed"
     >

@@ -18,8 +18,11 @@ export function TrustBar() {
     <section
       className="relative overflow-hidden"
       style={{
-        backgroundColor: 'var(--charcoal)',
-        backgroundImage: 'radial-gradient(ellipse at 50% 100%, rgba(201,169,110,0.06) 0%, transparent 55%)',
+        backgroundColor: '#2B2018',
+        backgroundImage: [
+          'radial-gradient(ellipse at 50% 110%, rgba(201,169,110,0.18) 0%, transparent 55%)',
+          'radial-gradient(ellipse at 50% -10%, rgba(201,169,110,0.08) 0%, transparent 45%)',
+        ].join(', '),
       }}
       aria-label="Trust indicators"
     >

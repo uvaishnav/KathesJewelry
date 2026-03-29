@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
-import { FadeOnScroll } from '@/components/ui/ScrollReveal'
+import { RevealOnScroll } from '@/components/ui/ScrollReveal'
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export function OurStoryStrip() {
@@ -10,8 +10,8 @@ export function OurStoryStrip() {
       style={{
         backgroundColor: 'var(--warm-cream)',
         backgroundImage: [
-          'radial-gradient(ellipse at 105% 0%, rgba(201,169,110,0.09) 0%, transparent 42%)',
-          'radial-gradient(ellipse at -8% 100%, rgba(201,169,110,0.06) 0%, transparent 40%)',
+          'radial-gradient(ellipse at 105% 0%, rgba(201,169,110,0.15) 0%, transparent 44%)',
+          'radial-gradient(ellipse at -5% 100%, rgba(201,169,110,0.11) 0%, transparent 42%)',
         ].join(', '),
       }}
       aria-label="Our story"

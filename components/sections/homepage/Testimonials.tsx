@@ -100,8 +100,8 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
       style={{
         backgroundColor: 'var(--dark-base)',
         backgroundImage: [
-          'radial-gradient(ellipse at 50% 0%, rgba(201,169,110,0.06) 0%, transparent 50%)',
-          'radial-gradient(ellipse at 8% 90%, rgba(201,169,110,0.05) 0%, transparent 45%)',
+          'radial-gradient(ellipse at 50% -5%, rgba(201,169,110,0.14) 0%, transparent 50%)',
+          'radial-gradient(ellipse at 5% 92%, rgba(201,169,110,0.12) 0%, transparent 48%)',
         ].join(', '),
       }}
       aria-label="Customer testimonials"

@@ -360,10 +360,28 @@ section {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   PHASE 3 PREMIUM — new animations & textures
+   PHASE 3 PREMIUM UI — Premium textures, animations, CTAs
    ══════════════════════════════════════════════════════════════ */
 
-/* ── Slow spin for hero rings ─────────────────────────────────── */
+/* ── Grain texture utility ───────────────────────────────────── */
+/* Used on dark sections as a semi-transparent overlay (opacity-[0.03]) */
+.grain-dark {
+  position: relative;
+}
+.grain-dark::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 300px 300px;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Slow spin for hero service showcase rings ──────────────── */
 @keyframes slowSpin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
@@ -371,35 +389,16 @@ section {
 
 /* ── Traveling dot for scroll indicator ─────────────────────── */
 @keyframes travelDown {
-  0%   { top: -6px; opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { top: calc(100% + 6px); opacity: 0; }
+  0%   { top: -4px; opacity: 0; }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { top: calc(100% + 4px); opacity: 0; }
 }
 
-/* ── Premium dark section backgrounds ──────────────────────── */
-/* Rich dark: warm vignette + subtle radial golds */
-/* dark bg gradient applied via inline style on each section */
+/* ── serviceRowIn — removed (caused opacity:0 during delay) ─── */
+/* Service rows now render visible by default. Hover = interaction. */
 
-/* ── Premium cream backgrounds ───────────────────────────────── */
-/* Subtle warm glow at top-right corner */
-/* cream bg applied via inline style on each section */
-
-/* ── Section entrance: clip-path sweep ───────────────────────── */
-/* Pair with JS IntersectionObserver or Framer whileInView for trigger */
-.section-sweep-in {
-  clip-path: inset(0 0 100% 0);
-  opacity: 0;
-  transition:
-    clip-path 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.4s ease;
-}
-.section-sweep-in.visible {
-  clip-path: inset(0 0 0% 0);
-  opacity: 1;
-}
-
-/* ── Service CTA link (text link with animated underline) ──── */
+/* ── Service CTA link — animated underline extend ──────────── */
 .service-cta-link {
   display: inline-flex;
   align-items: center;
@@ -423,9 +422,9 @@ section {
   width: 100%;
   height: 1px;
   background: var(--gold-primary);
-  transform: scaleX(0.35);
+  transform: scaleX(0.3);
   transform-origin: left;
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .service-cta-link:hover::after {
   transform: scaleX(1);
@@ -433,33 +432,24 @@ section {
 .service-cta-link::before {
   content: '→';
   font-size: 14px;
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   display: inline-block;
   order: 99;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .service-cta-link:hover::before {
   transform: translateX(5px);
 }
 
+/* ── Button shimmer sweep on hover ──────────────────────────── */
+/* Already defined in Phase 4, keeps working */
 
-/* ── Expanding card pointer cursor ──────────────────────────── */
+/* ── Expanding card cursor ───────────────────────────────────── */
 .expanding-card {
   cursor: pointer;
 }
 
-/* ── Rating star stagger ─────────────────────────────────────── */
-@keyframes starPop {
-  0%   { transform: scale(0.6); opacity: 0; }
-  60%  { transform: scale(1.2); }
-  100% { transform: scale(1.0); opacity: 1; }
-}
-
-/* ── Remove reduced-motion overrides ─────────────────────────── */
+/* ── Reduced motion: disable all Phase 3 animations ─────────── */
 @media (prefers-reduced-motion: reduce) {
-  [data-section="dark"],
-  .bg-\[var\(--warm-cream\)\] {
-    background-image: none;
-  }
   .service-cta-link::after,
   .service-cta-link::before {
     transition: none;
@@ -467,29 +457,21 @@ section {
   @keyframes travelDown {
     0%, 100% { opacity: 0; }
   }
-}
-
-/* ── serviceRowIn — staggered entrance for service/card rows ── */
-@keyframes serviceRowIn {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
+  @keyframes slowSpin {
+    from, to { transform: rotate(0deg); }
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .grain-dark::before {
+    display: none;
   }
 }
 
-/* ── Premium section backgrounds (applied inline, not via class) ─ */
-/* dark-section-bg mixin — used inline as style prop:
-   backgroundImage: radial-gradient(ellipse at 12% 85%, rgba(201,169,110,0.07)...) */
-
-/* ── cream-section-bg mixin — used inline as style prop:
-   backgroundImage: radial-gradient(ellipse at 100% 0%, rgba(201,169,110,0.08)...) */
-
-/* ── Prevent premature clip on sticky panel ──────────────────── */
-.services-panel-sticky {
-  position: sticky;
-  top: 7rem;
+/* ── RevealOnScroll utility classes (set by JS) ──────────────── */
+.reveal-hidden {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }

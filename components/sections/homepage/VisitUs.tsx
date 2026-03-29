@@ -1,6 +1,6 @@
 import { MapPin, Clock, Phone, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { ScrollReveal, FadeOnScroll } from '@/components/ui/ScrollReveal'
+import { ScrollReveal, RevealOnScroll } from '@/components/ui/ScrollReveal'
 
 const HOURS = [
   { day: 'Monday', hours: '10:00 AM – 6:00 PM' },
@@ -19,8 +19,8 @@ export function VisitUs() {
       style={{
         backgroundColor: 'var(--warm-cream)',
         backgroundImage: [
-          'radial-gradient(ellipse at 100% 0%, rgba(201,169,110,0.09) 0%, transparent 42%)',
-          'radial-gradient(ellipse at 0% 100%, rgba(201,169,110,0.06) 0%, transparent 40%)',
+          'radial-gradient(ellipse at 100% 0%, rgba(201,169,110,0.14) 0%, transparent 44%)',
+          'radial-gradient(ellipse at 0% 100%, rgba(201,169,110,0.10) 0%, transparent 42%)',
         ].join(', '),
       }}
       aria-label="Visit our store"

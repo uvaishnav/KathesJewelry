@@ -35,7 +35,10 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
       className="relative py-[var(--section-padding)] px-[var(--container-padding)]"
       style={{
         backgroundColor: 'var(--warm-cream)',
-        backgroundImage: 'radial-gradient(ellipse at 95% 5%, rgba(201,169,110,0.08) 0%, transparent 44%)',
+        backgroundImage: [
+          'radial-gradient(ellipse at 95% 5%, rgba(201,169,110,0.14) 0%, transparent 44%)',
+          'radial-gradient(ellipse at 5% 95%, rgba(201,169,110,0.08) 0%, transparent 40%)',
+        ].join(', '),
       }}
       aria-label="Featured products"
     >
