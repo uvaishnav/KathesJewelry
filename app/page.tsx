@@ -13,6 +13,7 @@ import { OurStoryStrip } from '@/components/sections/homepage/OurStoryStrip'
 import { Testimonials } from '@/components/sections/homepage/Testimonials'
 import { VisitUs } from '@/components/sections/homepage/VisitUs'
 import { InstagramFeed } from '@/components/sections/homepage/InstagramFeed'
+import { SectionTransition } from '@/components/ui/SectionTransition'
 
 export const metadata: Metadata = {
   title: "Kathe's Jewelry | New York's Trusted Jeweler Since 1993",
@@ -34,14 +35,49 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* DARK: Hero */}
       <Hero />
+
+      {/* DARK → DARK: charcoal trust strip — intentional warm transition */}
       <TrustBar />
+
+      {/* DARK: Services — editorial two-panel */}
       <ServicesGrid />
-      <CategoryMosaic />
+
+      {/* DARK → CREAM: subtle gradient bridge */}
+      <SectionTransition variant="dark-to-cream" />
+
+      {/* CREAM: Featured Products */}
       <FeaturedProducts products={products} />
+
+      {/* CREAM → DARK: angled wipe */}
+      <SectionTransition variant="cream-to-dark" shape="angle" />
+
+      {/* DARK: Category Mosaic — expanding cards */}
+      <CategoryMosaic />
+
+      {/* DARK → CREAM */}
+      <SectionTransition variant="dark-to-cream" />
+
+      {/* CREAM: Our Story */}
       <OurStoryStrip />
+
+      {/* CREAM → DARK: angled wipe */}
+      <SectionTransition variant="cream-to-dark" shape="angle" />
+
+      {/* DARK: Testimonials — marquee */}
       <Testimonials testimonials={testimonials} />
+
+      {/* DARK → CREAM */}
+      <SectionTransition variant="dark-to-cream" />
+
+      {/* CREAM: Visit Us */}
       <VisitUs />
+
+      {/* CREAM → DARK */}
+      <SectionTransition variant="cream-to-dark" />
+
+      {/* DARK: Instagram */}
       <InstagramFeed />
     </>
   )

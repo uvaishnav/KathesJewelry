@@ -1,12 +1,11 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronDown, Star } from 'lucide-react'
+import { Star } from 'lucide-react'
 import { useReducedMotion } from 'motion/react'
 import { Button } from '@/components/ui/Button'
-import { SERVICE_ICONS } from '@/components/ui/ServiceIcons'
 
 const SERVICES = [
   'Expert Jewelry Repair',
@@ -17,210 +16,310 @@ const SERVICES = [
   'Free Consultation',
 ]
 
-// Review platforms — three separate clickable links
-const REVIEW_PLATFORMS = [
-  {
-    name: 'Google',
-    rating: '4.8',
-    url: 'https://www.google.com/search?q=Kathe%27s+Jewelry+New+York+reviews',
-  },
-  {
-    name: 'Yelp',
-    rating: '4.8',
-    url: 'https://www.yelp.com/biz/kathes-jewelry-new-york',
-  },
-  {
-    name: 'TrustAnalytica',
-    rating: '4.8',
-    url: 'https://jewelry-store.trustanalytica.org/us/ny/new-york/reviews/kathe-s-jewelry',
-  },
+// Shape configs per service — different clip-path polygons for variety
+const SHAPES = [
+  // Octagon
+  'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
+  // Diamond
+  'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
+  // Wide hexagon
+  'polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%)',
+  // Pentagon
+  'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',
+  // Tall hexagon
+  'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+  // Gem facet
+  'polygon(50% 0%, 80% 15%, 100% 45%, 80% 85%, 50% 100%, 20% 85%, 0% 45%, 20% 15%)',
 ]
 
-// ── Service icon + typewriter ────────────────────────────────
+const REVIEW_PLATFORMS = [
+  { name: 'Google', rating: '4.8', url: 'https://www.google.com/search?q=Kathe%27s+Jewelry+New+York+reviews' },
+  { name: 'Yelp', rating: '4.8', url: 'https://www.yelp.com/biz/kathes-jewelry-new-york' },
+  { name: 'TrustAnalytica', rating: '4.8', url: 'https://jewelry-store.trustanalytica.org/us/ny/new-york/reviews/kathe-s-jewelry' },
+]
+
+// ── Service Showcase ─────────────────────────────────────────────
 function ServiceShowcase() {
   const [current, setCurrent] = useState(0)
-  const [displayed, setDisplayed] = useState('')
-  const [phase, setPhase] = useState<'typing' | 'hold' | 'erasing'>('typing')
-  const [iconVisible, setIconVisible] = useState(true)
+  const [phase, setPhase] = useState<'in' | 'hold' | 'out'>('in')
+  const [displayText, setDisplayText] = useState(SERVICES[0])
   const reduced = useReducedMotion()
 
   useEffect(() => {
     if (reduced) return
-    const service = SERVICES[current]
-    let t: ReturnType<typeof setTimeout>
 
-    if (phase === 'typing') {
-      if (displayed.length < service.length) {
-        t = setTimeout(() => setDisplayed(service.slice(0, displayed.length + 1)), 48)
-      } else {
-        t = setTimeout(() => setPhase('hold'), 2000)
-      }
+    let t: ReturnType<typeof setTimeout>
+    if (phase === 'in') {
+      t = setTimeout(() => setPhase('hold'), 400)
     } else if (phase === 'hold') {
-      t = setTimeout(() => setPhase('erasing'), 300)
+      t = setTimeout(() => setPhase('out'), 2800)
     } else {
-      if (displayed.length > 0) {
-        t = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 26)
-      } else {
-        setIconVisible(false)
-        setTimeout(() => {
-          setCurrent((c) => (c + 1) % SERVICES.length)
-          setIconVisible(true)
-          setPhase('typing')
-        }, 200)
-      }
+      // out → advance
+      t = setTimeout(() => {
+        const next = (current + 1) % SERVICES.length
+        setCurrent(next)
+        setDisplayText(SERVICES[next])
+        setPhase('in')
+      }, 500)
     }
     return () => clearTimeout(t)
-  }, [displayed, phase, current, reduced])
+  }, [phase, current, reduced])
 
-  const Icon = SERVICE_ICONS[current]
+  const isVisible = phase !== 'out'
+  const shape = SHAPES[current]
 
   return (
-    <div className="flex flex-col items-center gap-8" aria-hidden="true">
-      {/* Icon — clean, no orbit rings */}
+    <div
+      className="relative flex items-center justify-center"
+      style={{ width: 340, height: 340 }}
+      aria-hidden="true"
+    >
+      {/* Rotating outer ring */}
       <div
+        className="absolute inset-0 rounded-full"
         style={{
-          width: 160,
-          height: 160,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity: iconVisible ? 1 : 0,
-          transition: 'opacity 0.2s ease',
-          position: 'relative',
+          border: '1px solid rgba(201,169,110,0.15)',
+          animation: reduced ? 'none' : 'slowSpin 18s linear infinite',
         }}
-      >
-        {/* Subtle ambient glow only — no rings */}
+      />
+      {/* Second ring, counter-rotate */}
+      <div
+        className="absolute"
+        style={{
+          inset: 20,
+          borderRadius: '50%',
+          border: '1px dashed rgba(201,169,110,0.1)',
+          animation: reduced ? 'none' : 'slowSpin 26s linear infinite reverse',
+        }}
+      />
+
+      {/* Dot markers on the outer ring */}
+      {[0, 72, 144, 216, 288].map((deg) => (
         <div
+          key={deg}
+          className="absolute"
           style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'radial-gradient(circle at center, rgba(201,169,110,0.12) 0%, transparent 70%)',
+            width: 4,
+            height: 4,
+            background: 'rgba(201,169,110,0.4)',
+            borderRadius: '50%',
+            top: '50%',
+            left: '50%',
+            transform: `translate(-50%,-50%) rotate(${deg}deg) translateY(-168px)`,
           }}
         />
-        <Icon isActive={iconVisible} size={90} />
-      </div>
+      ))}
 
-      {/* Service name typewriter */}
-      <div className="text-center">
-        {/* "We specialize in" — white, visible */}
+      {/* Central morphing shape */}
+      <div
+        className="absolute"
+        style={{
+          inset: 44,
+          clipPath: shape,
+          background: 'linear-gradient(135deg, rgba(201,169,110,0.12) 0%, rgba(201,169,110,0.04) 100%)',
+          border: '1px solid rgba(201,169,110,0.25)',
+          transition: 'clip-path 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.45s ease, transform 0.45s ease',
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? 'scale(1)' : 'scale(0.88)',
+        }}
+      />
+
+      {/* Inner glow */}
+      <div
+        className="absolute"
+        style={{
+          inset: 60,
+          background: 'radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 70%)',
+          transition: 'opacity 0.4s ease',
+          opacity: isVisible ? 1 : 0,
+        }}
+      />
+
+      {/* Service text — centered in shape */}
+      <div
+        className="absolute text-center px-10"
+        style={{
+          inset: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'opacity 0.4s ease, transform 0.45s cubic-bezier(0.22,1,0.36,1)',
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? 'translateY(0)' : 'translateY(-12px)',
+        }}
+      >
         <p
           className="font-sans uppercase mb-3"
-          style={{ fontSize: 11, letterSpacing: '0.35em', color: 'rgba(255,255,255,0.75)' }}
+          style={{ fontSize: 9, letterSpacing: '0.38em', color: 'rgba(201,169,110,0.65)' }}
         >
           We specialize in
         </p>
+        <h3
+          className="font-serif font-semibold text-white leading-tight"
+          style={{ fontSize: 'clamp(1.2rem,2.2vw,1.6rem)', letterSpacing: '-0.01em' }}
+        >
+          {reduced ? SERVICES[0] : displayText}
+        </h3>
+      </div>
 
-        {/* Typed service — gold-light (same as "Jeweler"), larger */}
-        <div className="flex items-center justify-center gap-2 min-h-[32px]">
-          <span
-            className="font-sans font-semibold uppercase"
-            style={{
-              fontSize: 15,
-              letterSpacing: '0.22em',
-              color: 'var(--gold-light)',   /* same as the "Jeweler" highlight */
+      {/* Progress indicator — dots below */}
+      <div
+        className="absolute flex gap-2 items-center justify-center"
+        style={{ bottom: 12, left: '50%', transform: 'translateX(-50%)' }}
+      >
+        {SERVICES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => {
+              setCurrent(i)
+              setDisplayText(SERVICES[i])
+              setPhase('in')
             }}
-          >
-            {reduced ? SERVICES[0] : displayed}
-          </span>
-          {/* Blinking cursor */}
-          {!reduced && (
-            <span
-              style={{
-                display: 'inline-block',
-                width: 2,
-                height: 18,
-                background: 'var(--gold-light)',
-                borderRadius: 1,
-                animation: 'pulse 0.8s ease-in-out infinite',
-              }}
-            />
-          )}
-        </div>
-
-        {/* Progress dots */}
-        <div className="flex items-center justify-center gap-1.5 mt-3">
-          {SERVICES.map((_, i) => (
-            <div
-              key={i}
-              style={{
-                width: i === current ? 18 : 4,
-                height: 4,
-                borderRadius: 2,
-                background: i === current ? 'var(--gold-light)' : 'rgba(201,169,110,0.2)',
-                transition: 'all 0.4s cubic-bezier(0.22,1,0.36,1)',
-              }}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ── Review row — three separate platform links ────────────────
-function ReviewRow() {
-  return (
-    <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-10">
-      {/* Stars + summary */}
-      <div className="flex items-center gap-2 shrink-0">
-        <div className="flex" aria-label="5 star rating">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Star
-              key={i}
-              className="fill-[var(--gold-primary)] text-[var(--gold-primary)]"
-              style={{ width: 14, height: 14 }}
-            />
-          ))}
-        </div>
-        <span
-          className="font-sans font-bold text-white"
-          style={{ fontSize: 15 }}
-        >
-          4.8
-        </span>
-        <span
-          className="font-sans text-white/50"
-          style={{ fontSize: 11 }}
-        >
-          out of 5
-        </span>
-      </div>
-
-      {/* Thin vertical separator */}
-      <div className="hidden sm:block w-px h-4 bg-white/20" aria-hidden="true" />
-
-      {/* Three platform links */}
-      <div className="flex items-center gap-4 flex-wrap">
-        {REVIEW_PLATFORMS.map((p) => (
-          <a
-            key={p.name}
-            href={p.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center gap-1.5 transition-colors duration-200"
-            aria-label={`${p.rating} stars on ${p.name}`}
-          >
-            <span
-              className="font-sans font-semibold group-hover:text-[var(--gold-primary)] transition-colors duration-200"
-              style={{ fontSize: 13, color: 'rgba(255,255,255,0.9)' }}
-            >
-              {p.name}
-            </span>
-            {/* Underline on hover */}
-            <span
-              className="font-sans"
-              style={{ fontSize: 11, color: 'var(--gold-primary)' }}
-            >
-              ↗
-            </span>
-          </a>
+            className="transition-all duration-400"
+            style={{
+              width: i === current ? 20 : 5,
+              height: 3,
+              borderRadius: 2,
+              background: i === current ? 'var(--gold-primary)' : 'rgba(201,169,110,0.2)',
+              transition: 'all 0.4s cubic-bezier(0.22,1,0.36,1)',
+              cursor: 'pointer',
+              border: 'none',
+              padding: 0,
+            }}
+            aria-label={`View ${SERVICES[i]}`}
+          />
         ))}
       </div>
     </div>
   )
 }
 
-// ── Hero section ─────────────────────────────────────────────
+// ── Rating Badge — the star-rating redesigned ─────────────────────
+function RatingBadge() {
+  const [starred, setStarred] = useState(false)
+  const reduced = useReducedMotion()
+
+  useEffect(() => {
+    if (reduced) { setStarred(true); return }
+    const t = setTimeout(() => setStarred(true), 900)
+    return () => clearTimeout(t)
+  }, [reduced])
+
+  return (
+    <div className="mb-10">
+      {/* Stars + number row */}
+      <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((n) => (
+            <Star
+              key={n}
+              aria-hidden="true"
+              style={{
+                width: 16,
+                height: 16,
+                color: 'var(--gold-primary)',
+                fill: starred ? 'var(--gold-primary)' : 'transparent',
+                transition: `fill 0.3s ease ${(n - 1) * 0.1}s`,
+              }}
+            />
+          ))}
+        </div>
+        <span
+          className="font-sans font-bold text-white"
+          style={{ fontSize: 20, lineHeight: 1 }}
+        >
+          4.8
+        </span>
+        <span
+          className="font-body italic"
+          style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)' }}
+        >
+          out of 5
+        </span>
+      </div>
+
+      {/* Platform links */}
+      <div className="flex items-center flex-wrap gap-x-1 gap-y-2">
+        <span
+          className="font-sans"
+          style={{ fontSize: 11, letterSpacing: '0.04em', color: 'rgba(255,255,255,0.4)' }}
+        >
+          Rated across
+        </span>
+        {REVIEW_PLATFORMS.map((p, i) => (
+          <span key={p.name} className="flex items-center gap-1">
+            {i > 0 && (
+              <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11 }}>·</span>
+            )}
+            <a
+              href={p.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-sans group relative"
+              style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)' }}
+              aria-label={`${p.rating} stars on ${p.name}`}
+            >
+              <span className="group-hover:text-[var(--gold-primary)] transition-colors duration-200">
+                {p.name}
+              </span>
+              {/* Underline trace */}
+              <span
+                className="absolute -bottom-0.5 left-0 h-px bg-[var(--gold-primary)] transition-all duration-300"
+                style={{ width: 0 }}
+                aria-hidden="true"
+              />
+            </a>
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── Scroll indicator — elegant line with traveling dot ───────────
+function ScrollIndicator() {
+  const reduced = useReducedMotion()
+  return (
+    <div
+      className="absolute left-1/2 flex flex-col items-center gap-0"
+      style={{ bottom: 28, transform: 'translateX(-50%)', zIndex: 3 }}
+      aria-hidden="true"
+    >
+      <span
+        className="font-sans uppercase mb-2"
+        style={{ fontSize: 8, letterSpacing: '0.38em', color: 'rgba(201,169,110,0.45)' }}
+      >
+        Scroll
+      </span>
+      <div className="relative" style={{ width: 1, height: 52, overflow: 'hidden' }}>
+        {/* Static line */}
+        <div
+          className="absolute inset-0"
+          style={{ background: 'linear-gradient(to bottom, rgba(201,169,110,0.0), rgba(201,169,110,0.3), rgba(201,169,110,0.0))' }}
+        />
+        {/* Traveling dot */}
+        {!reduced && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: 3,
+              height: 3,
+              borderRadius: '50%',
+              background: 'var(--gold-primary)',
+              animation: 'travelDown 1.8s ease-in-out infinite',
+            }}
+          />
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ── Hero ─────────────────────────────────────────────────────────
 export function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const reduced = useReducedMotion()
@@ -231,7 +330,7 @@ export function Hero() {
     words.forEach((w, i) => { w.style.animationDelay = `${0.2 + i * 0.1}s` })
   }, [reduced])
 
-  const H1_WORDS = ['New', "York's", 'Trusted', 'Jeweler', 'Since', '1993']
+  const H1_WORDS = ["New York's", 'Trusted', 'Jeweler', 'Since', '1993']
 
   return (
     <section
@@ -242,28 +341,32 @@ export function Hero() {
       {/* Background */}
       <Image
         src="/images/hero-store-interior.webp"
-        alt="Kathe's Jewelry store interior — East Village NYC"
+        alt="Kathe's Jewelry store interior — East Village NYC — warm display cases with gold and silver jewelry"
         fill
         priority
         className="object-cover object-center"
         sizes="100vw"
       />
 
-      {/* Layered overlays */}
+      {/* Layered overlay */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(155deg, rgba(17,17,17,0.90) 0%, rgba(43,32,24,0.75) 40%, rgba(17,17,17,0.68) 70%, rgba(17,17,17,0.80) 100%)',
+            'linear-gradient(155deg, rgba(17,17,17,0.92) 0%, rgba(43,32,24,0.78) 38%, rgba(17,17,17,0.65) 68%, rgba(17,17,17,0.82) 100%)',
         }}
         aria-hidden="true"
       />
+      {/* Bottom-left gold bloom */}
       <div
-        className="absolute bottom-0 left-0 pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
-          width: '55%',
-          height: '50%',
-          background: 'radial-gradient(ellipse at bottom left, rgba(201,169,110,0.16) 0%, transparent 68%)',
+          bottom: '-5%',
+          left: '-5%',
+          width: '50%',
+          height: '55%',
+          background:
+            'radial-gradient(ellipse at bottom left, rgba(201,169,110,0.12) 0%, transparent 65%)',
         }}
         aria-hidden="true"
       />
@@ -284,7 +387,7 @@ export function Hero() {
               <div className="h-px w-8 bg-[var(--gold-primary)]" aria-hidden="true" />
               <span
                 className="font-sans uppercase"
-                style={{ fontSize: 10, letterSpacing: '0.45em', color: 'var(--gold-primary)' }}
+                style={{ fontSize: 10, letterSpacing: '0.46em', color: 'var(--gold-primary)' }}
               >
                 Est. 1993 · East Village, New York
               </span>
@@ -294,7 +397,7 @@ export function Hero() {
             <h1
               ref={titleRef}
               className="font-serif font-bold text-white leading-[1.05] tracking-tight mb-6"
-              style={{ fontSize: 'clamp(2.6rem, 5.5vw, 5.2rem)' }}
+              style={{ fontSize: 'clamp(2.6rem,5.5vw,5.2rem)' }}
             >
               {H1_WORDS.map((word, i) => (
                 <span key={i}>
@@ -315,9 +418,9 @@ export function Hero() {
             <p
               className="font-body leading-[1.8] mb-8"
               style={{
-                fontSize: 'clamp(15px, 2vw, 18px)',
+                fontSize: 'clamp(15px,2vw,18px)',
                 maxWidth: 480,
-                color: 'rgba(255,255,255,0.80)',
+                color: 'rgba(255,255,255,0.78)',
               }}
             >
               From resizing a cherished heirloom to designing your perfect
@@ -325,22 +428,24 @@ export function Hero() {
               is treated like it belongs to family.
             </p>
 
-            {/* Reviews — three separate links, no gold box */}
-            <ReviewRow />
+            {/* ── RATING BADGE — more prominent ── */}
+            <RatingBadge />
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-4">
-              <Button variant="primary" href="/shop" className="btn-shimmer">
+              <Button variant="primary" href="/shop">
                 Explore Our Jewelry
               </Button>
               <Link
                 href="/services"
-                className="btn-shimmer inline-flex items-center justify-center gap-2 font-sans font-semibold uppercase px-8 py-4 transition-all duration-200"
+                className="inline-flex items-center justify-center gap-2 font-sans font-semibold uppercase px-8 py-4 transition-all duration-300"
                 style={{
                   fontSize: 12,
-                  letterSpacing: '0.15em',
-                  border: '1px solid rgba(255,255,255,0.45)',
-                  color: 'rgba(255,255,255,0.88)',
+                  letterSpacing: '0.16em',
+                  border: '1px solid rgba(255,255,255,0.35)',
+                  color: 'rgba(255,255,255,0.85)',
+                  position: 'relative',
+                  overflow: 'hidden',
                 }}
               >
                 Discover Our Services
@@ -348,7 +453,7 @@ export function Hero() {
             </div>
           </div>
 
-          {/* RIGHT: Service icons — hidden on mobile */}
+          {/* RIGHT: Service showcase */}
           <div className="hidden lg:flex justify-center items-center">
             <ServiceShowcase />
           </div>
@@ -356,16 +461,7 @@ export function Hero() {
       </div>
 
       {/* Scroll indicator */}
-      <div
-        className="hero-scroll-indicator absolute left-1/2 flex flex-col items-center gap-1"
-        style={{ bottom: 28, zIndex: 3 }}
-        aria-hidden="true"
-      >
-        <span className="font-sans uppercase" style={{ fontSize: 9, letterSpacing: '0.3em', color: 'rgba(201,169,110,0.55)' }}>
-          Scroll
-        </span>
-        <ChevronDown style={{ width: 20, height: 20, color: 'var(--gold-primary)' }} />
-      </div>
+      <ScrollIndicator />
     </section>
   )
 }

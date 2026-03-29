@@ -15,26 +15,43 @@ export interface ButtonProps {
 }
 
 const base =
-  'btn-shimmer inline-flex items-center justify-center gap-2 font-sans font-semibold text-[12px] tracking-[2px] uppercase transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+  'btn-shimmer inline-flex items-center justify-center gap-2 font-sans font-semibold text-[12px] tracking-[2px] uppercase transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-[var(--gold-primary)] focus-visible:outline-offset-2 relative overflow-hidden'
 
 const variants: Record<ButtonVariant, string> = {
-  primary:
-    `${base} bg-[var(--gold-primary)] text-[#111] px-8 py-4
-     hover:bg-[var(--gold-light)]
-     shadow-[0_0_0_0_rgba(201,169,110,0)]
-     hover:shadow-[0_0_24px_rgba(201,169,110,0.35),0_4px_16px_rgba(0,0,0,0.2)]`,
+  primary: [
+    base,
+    'bg-[var(--gold-primary)] text-[#111] px-8 py-4',
+    // shadow grows on hover, slight lift
+    'shadow-[0_2px_0_rgba(0,0,0,0.15)]',
+    'hover:bg-[var(--gold-light)] hover:-translate-y-[2px]',
+    'hover:shadow-[0_6px_24px_rgba(201,169,110,0.45),0_2px_0_rgba(0,0,0,0.1)]',
+    'active:translate-y-0 active:shadow-[0_1px_0_rgba(0,0,0,0.2)]',
+  ].join(' '),
 
-  ghost:
-    `${base} border border-[var(--gold-primary)] text-[var(--gold-primary)] px-8 py-4
-     hover:bg-[var(--gold-primary)] hover:text-[#111]
-     hover:shadow-[0_0_20px_rgba(201,169,110,0.3)]`,
+  ghost: [
+    base,
+    'border border-[var(--gold-primary)] text-[var(--gold-primary)] px-8 py-4',
+    'hover:bg-[var(--gold-primary)] hover:text-[#111] hover:-translate-y-[2px]',
+    'hover:shadow-[0_6px_20px_rgba(201,169,110,0.3)]',
+    'active:translate-y-0',
+  ].join(' '),
 
-  'dark-ghost':
-    `${base} border border-[#1A1A1A] text-[#1A1A1A] px-8 py-4
-     hover:bg-[#1A1A1A] hover:text-white`,
+  'dark-ghost': [
+    base,
+    'border border-[#1A1A1A] text-[#1A1A1A] px-8 py-4',
+    'hover:bg-[#1A1A1A] hover:text-white hover:-translate-y-[2px]',
+    'hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)]',
+    'active:translate-y-0',
+  ].join(' '),
 
-  text:
-    `${base} text-[var(--gold-primary)] hover:underline underline-offset-4`,
+  text: [
+    base,
+    'text-[var(--gold-primary)]',
+    'after:content-[""] after:absolute after:bottom-0 after:left-0',
+    'after:w-full after:h-px after:bg-[var(--gold-primary)]',
+    'after:scale-x-0 after:origin-left after:transition-transform after:duration-300',
+    'hover:after:scale-x-100',
+  ].join(' '),
 }
 
 export function Button({

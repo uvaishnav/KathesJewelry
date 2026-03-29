@@ -5,10 +5,23 @@ import { ScrollReveal } from '@/components/ui/ScrollReveal'
 export function OurStoryStrip() {
   return (
     <section
-      className="bg-[var(--warm-cream)] py-[var(--section-padding)] px-[var(--container-padding)] relative overflow-hidden" data-section="light"
+      className="bg-[var(--warm-cream)] py-[var(--section-padding)] px-[var(--container-padding)] relative overflow-hidden"
+      data-section="light"
       aria-label="Our story"
     >
-      {/* Decorative background numeral — invisible watermark */}
+      {/* Premium cream background: subtle cross-ruled linen texture + warm bloom */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: [
+            'radial-gradient(ellipse at 110% 0%, rgba(201,169,110,0.07) 0%, transparent 48%)',
+            'radial-gradient(ellipse at -10% 100%, rgba(201,169,110,0.05) 0%, transparent 42%)',
+          ].join(', '),
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Decorative watermark numeral */}
       <div
         className="absolute right-0 top-1/2 -translate-y-1/2 select-none pointer-events-none"
         aria-hidden="true"
@@ -16,9 +29,8 @@ export function OurStoryStrip() {
           fontFamily: 'var(--font-serif)',
           fontSize: 'clamp(180px, 25vw, 320px)',
           fontWeight: 700,
-          color: 'var(--border-subtle)',
+          color: 'rgba(201,169,110,0.06)',
           lineHeight: 1,
-          opacity: 0.5,
         }}
       >
         30
@@ -28,7 +40,7 @@ export function OurStoryStrip() {
         style={{ maxWidth: 'var(--max-width)' }}
         className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10"
       >
-        {/* Left — Image with gold accent */}
+        {/* Left — Image with corner accents */}
         <ScrollReveal direction="left">
           <div className="relative aspect-[4/3] overflow-hidden">
             <Image
@@ -38,18 +50,18 @@ export function OurStoryStrip() {
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
-            {/* Gold corner accent */}
-            <div
-              className="absolute bottom-0 left-0 w-20 h-[3px] bg-[var(--gold-primary)]"
-              aria-hidden="true"
-            />
-            {/* Subtle warm vignette */}
+            {/* Bottom-left gold bar */}
+            <div className="absolute bottom-0 left-0 w-20 h-[3px] bg-[var(--gold-primary)]" aria-hidden="true" />
+            {/* Warm edge vignette */}
             <div
               className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  'linear-gradient(135deg, transparent 60%, rgba(43,32,24,0.15) 100%)',
-              }}
+              style={{ background: 'linear-gradient(135deg, transparent 55%, rgba(43,32,24,0.18) 100%)' }}
+              aria-hidden="true"
+            />
+            {/* Corner bracket — top right */}
+            <span
+              className="absolute top-0 right-0 border-t border-r border-[var(--gold-primary)]/40"
+              style={{ width: 32, height: 32 }}
               aria-hidden="true"
             />
           </div>
@@ -60,7 +72,10 @@ export function OurStoryStrip() {
           {/* Eyebrow */}
           <div className="flex items-center gap-3 mb-6">
             <div className="h-px w-8 bg-[var(--gold-primary)]" aria-hidden="true" />
-            <span className="font-sans text-[10px] tracking-[5px] uppercase text-[var(--gold-primary)]">
+            <span
+              className="font-sans uppercase"
+              style={{ fontSize: 10, letterSpacing: '0.45em', color: 'var(--gold-primary)' }}
+            >
               Our Story
             </span>
           </div>
@@ -70,19 +85,18 @@ export function OurStoryStrip() {
             className="font-serif font-semibold text-[var(--text-on-light)] leading-[1.12] tracking-tight mb-8"
             style={{ fontSize: 'clamp(1.85rem, 4vw, 3rem)' }}
           >
-            30 Years in the Heart of the East Village
+            30 Years in the Heart of<br />the East Village
           </h2>
 
-          {/* Pull quote — the hero of this section */}
+          {/* Pull quote */}
           <blockquote className="relative mb-8 pl-6">
-            {/* Gold left bar */}
             <div
               className="absolute left-0 top-0 bottom-0 w-[3px] bg-[var(--gold-primary)]"
               aria-hidden="true"
             />
-            {/* Large decorative open quote */}
             <span
-              className="absolute -top-3 -left-1 font-serif text-[80px] leading-none text-[var(--gold-primary)]/20 select-none"
+              className="absolute -top-3 -left-1 font-serif text-[80px] leading-none select-none"
+              style={{ color: 'rgba(201,169,110,0.18)' }}
               aria-hidden="true"
             >
               &ldquo;
@@ -91,63 +105,48 @@ export function OurStoryStrip() {
               I didn&apos;t come to New York to open a jewelry store.
               I came to New York to build something that lasts.
             </p>
-            <cite className="font-sans text-[10px] tracking-[3px] uppercase text-[var(--gold-primary)] not-italic block mt-3">
+            <cite
+              className="font-sans not-italic block mt-3"
+              style={{ fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--gold-primary)' }}
+            >
               — Jonas Rueda, Founder
             </cite>
           </blockquote>
 
-          {/* Body paragraphs */}
+          {/* Body */}
           <p className="font-body text-[16px] text-[var(--text-secondary)] leading-[1.85] mb-4">
             Jonas Rueda arrived in New York City from Ecuador at seventeen
-            years old. He spoke little English, had no connections, and worked
-            as a dishwasher to get by. A chance encounter with a local jeweler
-            changed everything — he discovered a craft, and a calling.
+            years old. A chance encounter with a local jeweler changed everything —
+            he discovered a craft, and a calling.
           </p>
 
           <p className="font-body text-[16px] text-[var(--text-secondary)] leading-[1.85] mb-8">
-            In 1993, he opened Kathe&apos;s Jewelry on 1st Avenue in the East
-            Village, naming it after his daughter. Over thirty years later,
-            Kathe is now a GIA-certified gemologist and FIT-trained designer —
-            working alongside her father in the same shop where she grew up.
+            In 1993, he opened Kathe&apos;s Jewelry on 1st Avenue, naming it after
+            his daughter. Over thirty years later, Kathe is a GIA-certified
+            gemologist and FIT-trained designer — working alongside her father
+            in the same shop where she grew up.
           </p>
 
-          {/* Stats row */}
+          {/* Stats */}
           <div className="flex gap-10 mb-10 pb-8 border-b border-[var(--border-subtle)]">
-            <div>
-              <p
-                className="font-sans font-bold text-[var(--gold-primary)] leading-none mb-1"
-                style={{ fontSize: 'clamp(2rem, 4vw, 2.5rem)' }}
-              >
-                30+
-              </p>
-              <p className="font-body text-[13px] text-[var(--text-muted)]">
-                Years in Business
-              </p>
-            </div>
-            <div className="w-px bg-[var(--border-subtle)]" aria-hidden="true" />
-            <div>
-              <p
-                className="font-sans font-bold text-[var(--gold-primary)] leading-none mb-1"
-                style={{ fontSize: 'clamp(2rem, 4vw, 2.5rem)' }}
-              >
-                4.8★
-              </p>
-              <p className="font-body text-[13px] text-[var(--text-muted)]">
-                Average Rating
-              </p>
-            </div>
-            <div className="w-px bg-[var(--border-subtle)]" aria-hidden="true" />
-            <div>
-              <p
-                className="font-sans font-bold text-[var(--gold-primary)] leading-none mb-1"
-                style={{ fontSize: 'clamp(2rem, 4vw, 2.5rem)' }}
-              >
-                200+
-              </p>
-              <p className="font-body text-[13px] text-[var(--text-muted)]">
-                Verified Reviews
-              </p>
-            </div>
+            {[
+              { val: '30+', label: 'Years in Business' },
+              { val: '4.8★', label: 'Average Rating' },
+              { val: '200+', label: 'Verified Reviews' },
+            ].map((s, i) => (
+              <div key={s.label}>
+                <p
+                  className="font-sans font-bold text-[var(--gold-primary)] leading-none mb-1"
+                  style={{ fontSize: 'clamp(1.8rem,3.5vw,2.4rem)' }}
+                >
+                  {s.val}
+                </p>
+                <p className="font-body text-[13px] text-[var(--text-muted)]">{s.label}</p>
+                {i < 2 && (
+                  <div className="hidden" aria-hidden="true" />
+                )}
+              </div>
+            ))}
           </div>
 
           {/* CTA */}
@@ -155,7 +154,10 @@ export function OurStoryStrip() {
             <Button variant="primary" href="/about-us">
               Meet the Full Family
             </Button>
-            <p className="font-body text-[13px] text-[var(--text-muted)] italic">
+            <p
+              className="font-body italic"
+              style={{ fontSize: 13, color: 'var(--text-muted)' }}
+            >
               Est. 1993 · 226 1st Ave, East Village
             </p>
           </div>

@@ -17,7 +17,7 @@ export function TrustBar() {
   return (
     <section
       className="bg-[var(--charcoal)] relative overflow-hidden"
-      data-section="charcoal"
+      data-section="dark"
       aria-label="Trust indicators"
     >
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[var(--gold-primary)]/40 to-transparent" aria-hidden="true" />

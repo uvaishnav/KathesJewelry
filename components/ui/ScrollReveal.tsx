@@ -7,8 +7,14 @@ interface ScrollRevealProps {
   children: React.ReactNode
   className?: string
   delay?: number
-  direction?: 'up' | 'left' | 'right' | 'scale'
+  direction?: 'up' | 'left' | 'right' | 'scale' | 'fade'
   duration?: number
+  /**
+   * once: false → re-animates every time the element enters the viewport
+   * Enables bidirectional scroll storytelling
+   */
+  once?: boolean
+  amount?: number
 }
 
 export function ScrollReveal({
@@ -16,7 +22,9 @@ export function ScrollReveal({
   className,
   delay = 0,
   direction = 'up',
-  duration = 0.7,
+  duration = 0.65,
+  once = false,
+  amount = 0.1,
 }: ScrollRevealProps) {
   const shouldReduceMotion = useReducedMotion()
 
@@ -24,18 +32,35 @@ export function ScrollReveal({
     return <div className={className}>{children}</div>
   }
 
+  const initial = {
+    opacity: 0,
+    y: direction === 'up' ? 28 : 0,
+    x: direction === 'left' ? -28 : direction === 'right' ? 28 : 0,
+    scale:
+      direction === 'scale'
+        ? 0.92
+        : direction === 'up'
+          ? 0.96
+          : 1,
+    filter:
+      direction === 'fade' ? 'blur(4px)' : 'blur(0px)',
+  }
+
+  const animate = {
+    opacity: 1,
+    y: 0,
+    x: 0,
+    scale: 1,
+    filter: 'blur(0px)',
+  }
+
   return (
     <LazyMotion features={domAnimation}>
       <m.div
         className={className}
-        initial={{
-          opacity: 0,
-          y: direction === 'up' ? 32 : 0,
-          x: direction === 'left' ? -32 : direction === 'right' ? 32 : 0,
-          scale: direction === 'scale' || direction === 'up' ? 0.94 : 1,
-        }}
-        whileInView={{ opacity: 1, y: 0, x: 0, scale: 1 }}
-        viewport={{ once: true, margin: '-64px' }}
+        initial={initial}
+        whileInView={animate}
+        viewport={{ once, amount, margin: '-50px 0px' }}
         transition={{
           duration,
           delay,
@@ -50,8 +75,7 @@ export function ScrollReveal({
 
 /**
  * ClipReveal — Apple-style clip-path text/element entrance.
- * The element sweeps in from the bottom as if a curtain lifts.
- * Perfect for section headings and important text.
+ * Content sweeps up into view — cinematic, editorial.
  */
 export function ClipReveal({
   children,
@@ -80,14 +104,14 @@ export function ClipReveal({
           observer.disconnect()
         }
       },
-      { rootMargin: '-60px' }
+      { rootMargin: '-48px' }
     )
     observer.observe(el)
     return () => observer.disconnect()
   }, [shouldReduceMotion, delay])
 
   return (
-    <div ref={ref} className={className} style={shouldReduceMotion ? {} : undefined}>
+    <div ref={ref} className={className}>
       {children}
     </div>
   )
