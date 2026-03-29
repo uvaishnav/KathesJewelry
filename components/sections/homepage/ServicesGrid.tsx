@@ -3,10 +3,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Wrench, Sparkles, Coins, Clock, Gem, Phone, ArrowUpRight } from 'lucide-react'
-import { LazyMotion, domAnimation, m, AnimatePresence } from 'motion/react'
-import { useReducedMotion } from 'motion/react'
+import { LazyMotion, domAnimation, m, AnimatePresence, useReducedMotion } from 'motion/react'
 import type { LucideIcon } from 'lucide-react'
-import { ScrollReveal } from '@/components/ui/ScrollReveal'
+import { FadeOnScroll } from '@/components/ui/ScrollReveal'
 
 interface Service {
   index: string
@@ -90,26 +89,21 @@ export function ServicesGrid() {
 
   return (
     <section
-      data-section="dark"
-      className="relative bg-[var(--dark-base)] py-[var(--section-padding)] px-[var(--container-padding)] overflow-hidden"
+      className="relative py-[var(--section-padding)] px-[var(--container-padding)] overflow-hidden"
+      style={{
+        backgroundColor: 'var(--dark-base)',
+        // Premium dark: warm gold blooms in corners — applied inline so they always show
+        backgroundImage: [
+          'radial-gradient(ellipse at 12% 85%, rgba(201,169,110,0.07) 0%, transparent 50%)',
+          'radial-gradient(ellipse at 90% 10%, rgba(201,169,110,0.05) 0%, transparent 45%)',
+        ].join(', '),
+      }}
       aria-label="Our services"
     >
-      {/* Ambient glow */}
-      <div
-        className="pointer-events-none absolute -top-40 -right-40 opacity-[0.04]"
-        style={{
-          width: 700,
-          height: 700,
-          background: 'radial-gradient(circle, #C9A96E 0%, transparent 68%)',
-          borderRadius: '50%',
-        }}
-        aria-hidden="true"
-      />
-
       <div style={{ maxWidth: 'var(--max-width)' }} className="mx-auto">
 
-        {/* Eyebrow */}
-        <ScrollReveal>
+        {/* Eyebrow — uses CSS animation, not ScrollReveal */}
+        <FadeOnScroll delay={0}>
           <div className="flex items-center gap-5 mb-16 lg:mb-20">
             <span
               className="font-sans uppercase"
@@ -119,18 +113,18 @@ export function ServicesGrid() {
             </span>
             <div
               className="flex-1 h-px"
-              style={{ background: 'linear-gradient(to right, rgba(201,169,110,0.3), transparent)' }}
+              style={{ background: 'linear-gradient(to right, rgba(201,169,110,0.35), transparent)' }}
               aria-hidden="true"
             />
           </div>
-        </ScrollReveal>
+        </FadeOnScroll>
 
-        {/* ── DESKTOP two-panel ── */}
+        {/* ── DESKTOP: Two-panel editorial layout ── */}
         <div className="hidden lg:grid lg:grid-cols-[460px_1fr] gap-16 xl:gap-24 items-start">
 
-          {/* Left: heading + numbered list */}
+          {/* Left: Heading + numbered list — no ScrollReveal wrapper, uses CSS animation */}
           <div>
-            <ScrollReveal>
+            <FadeOnScroll delay={0.05}>
               <h2
                 className="font-serif font-semibold text-white leading-[1.08] mb-14"
                 style={{ fontSize: 'clamp(2rem,3.5vw,3.2rem)' }}
@@ -138,77 +132,87 @@ export function ServicesGrid() {
                 More Than a<br />
                 <em className="not-italic" style={{ color: 'var(--gold-primary)' }}>Jewelry Store</em>
               </h2>
-            </ScrollReveal>
+            </FadeOnScroll>
 
-            {SERVICES.map((s, i) => (
-              <ScrollReveal key={s.title} delay={i * 0.05}>
+            {/* Service list — NO ScrollReveal, renders immediately */}
+            <div>
+              {SERVICES.map((s, i) => (
                 <button
+                  key={s.title}
                   onMouseEnter={() => setActive(i)}
                   onClick={() => setActive(i)}
-                  className="group w-full flex items-center gap-6 py-[18px] border-b text-left transition-all duration-300"
+                  className="group w-full flex items-center gap-6 py-[18px] border-b text-left"
                   style={{
                     borderColor: active === i
                       ? 'rgba(201,169,110,0.35)'
                       : 'rgba(255,255,255,0.07)',
+                    transition: 'border-color 0.3s ease',
+                    // Staggered fade-in via CSS animation-delay
+                    animation: 'serviceRowIn 0.55s cubic-bezier(0.22,1,0.36,1) both',
+                    animationDelay: `${0.1 + i * 0.06}s`,
                   }}
                   aria-label={`View ${s.title} details`}
                 >
                   <span
-                    className="flex-shrink-0 font-sans transition-colors duration-300"
+                    className="flex-shrink-0 font-sans"
                     style={{
                       width: 28,
                       fontSize: 11,
                       letterSpacing: '0.12em',
                       color: active === i ? 'var(--gold-primary)' : 'rgba(255,255,255,0.18)',
+                      transition: 'color 0.3s ease',
                     }}
                   >
                     {s.index}
                   </span>
                   <span
-                    className="font-serif flex-1 transition-all duration-300"
+                    className="font-serif flex-1"
                     style={{
                       fontSize: 21,
                       fontWeight: 500,
                       letterSpacing: '-0.01em',
-                      color: active === i ? '#fff' : 'rgba(255,255,255,0.42)',
+                      color: active === i ? '#fff' : 'rgba(255,255,255,0.45)',
+                      transition: 'color 0.3s ease',
                     }}
                   >
                     {s.title}
                   </span>
                   <span
-                    className="hidden xl:block flex-shrink-0 font-sans uppercase transition-all duration-300"
+                    className="hidden xl:block flex-shrink-0 font-sans uppercase"
                     style={{
                       fontSize: 9,
                       letterSpacing: '0.22em',
                       color: active === i ? 'rgba(201,169,110,0.65)' : 'transparent',
+                      transition: 'color 0.3s ease',
                     }}
                   >
                     {s.tagline}
                   </span>
                   <ArrowUpRight
-                    className="flex-shrink-0 w-[15px] h-[15px] transition-all duration-300"
+                    className="flex-shrink-0 w-[15px] h-[15px]"
                     style={{
                       color: 'var(--gold-primary)',
                       opacity: active === i ? 1 : 0,
                       transform: active === i ? 'translate(0,0)' : 'translate(-5px,5px)',
+                      transition: 'opacity 0.25s ease, transform 0.25s ease',
                     }}
                     aria-hidden="true"
                   />
                 </button>
-              </ScrollReveal>
-            ))}
+              ))}
+            </div>
           </div>
 
-          {/* Right: animated service preview */}
+          {/* Right: service detail — AnimatePresence crossfade, always starts visible */}
           <div className="sticky top-28 min-h-[440px] flex items-start pt-2">
             <LazyMotion features={domAnimation}>
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="wait" initial={false}>
                 <m.div
                   key={active}
-                  initial={shouldReduce ? {} : { opacity: 0, y: 24, scale: 0.98 }}
-                  animate={shouldReduce ? {} : { opacity: 1, y: 0, scale: 1 }}
-                  exit={shouldReduce ? {} : { opacity: 0, y: -18, scale: 0.97 }}
-                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  initial={shouldReduce ? undefined : { opacity: 0, y: 20 }}
+                  animate={shouldReduce ? undefined : { opacity: 1, y: 0 }}
+                  exit={shouldReduce ? undefined : { opacity: 0, y: -16 }}
+                  transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
                   className="w-full relative"
                 >
                   {/* Giant watermark number */}
@@ -219,7 +223,7 @@ export function ServicesGrid() {
                       left: -8,
                       fontSize: 'clamp(7rem,13vw,13rem)',
                       lineHeight: 1,
-                      color: 'rgba(201,169,110,0.04)',
+                      color: 'rgba(201,169,110,0.05)',
                       letterSpacing: '-0.05em',
                     }}
                     aria-hidden="true"
@@ -232,30 +236,29 @@ export function ServicesGrid() {
                     <div
                       className="relative inline-flex items-center justify-center"
                       style={{
-                        width: 72,
-                        height: 72,
-                        background:
-                          'linear-gradient(135deg, rgba(201,169,110,0.12), rgba(201,169,110,0.03))',
-                        border: '1px solid rgba(201,169,110,0.22)',
+                        width: 68,
+                        height: 68,
+                        background: 'linear-gradient(135deg, rgba(201,169,110,0.13), rgba(201,169,110,0.04))',
+                        border: '1px solid rgba(201,169,110,0.25)',
                       }}
                     >
-                      <Icon className="w-8 h-8" style={{ color: 'var(--gold-primary)' }} aria-hidden="true" />
-                      {/* corner accents */}
+                      <Icon className="w-7 h-7" style={{ color: 'var(--gold-primary)' }} aria-hidden="true" />
+                      {/* Corner accents */}
                       <span
                         className="absolute border-t border-l border-[var(--gold-primary)]"
-                        style={{ top: -1, left: -1, width: 14, height: 14 }}
+                        style={{ top: -1, left: -1, width: 12, height: 12 }}
                         aria-hidden="true"
                       />
                       <span
                         className="absolute border-b border-r border-[var(--gold-primary)]"
-                        style={{ bottom: -1, right: -1, width: 14, height: 14 }}
+                        style={{ bottom: -1, right: -1, width: 12, height: 12 }}
                         aria-hidden="true"
                       />
                     </div>
                   </div>
 
                   <p
-                    className="font-sans uppercase mb-4"
+                    className="font-sans uppercase mb-3"
                     style={{ fontSize: 10, letterSpacing: '0.36em', color: 'var(--gold-primary)' }}
                   >
                     {service.tagline}
@@ -263,7 +266,7 @@ export function ServicesGrid() {
 
                   <h3
                     className="font-serif font-semibold text-white leading-[1.1] mb-5"
-                    style={{ fontSize: 'clamp(2rem,3vw,2.8rem)' }}
+                    style={{ fontSize: 'clamp(1.9rem,3vw,2.8rem)' }}
                   >
                     {service.title}
                   </h3>
@@ -283,16 +286,13 @@ export function ServicesGrid() {
 
                   <p
                     className="font-sans mb-10"
-                    style={{ fontSize: 12, letterSpacing: '0.04em', color: 'rgba(201,169,110,0.45)' }}
+                    style={{ fontSize: 12, letterSpacing: '0.04em', color: 'rgba(201,169,110,0.5)' }}
                   >
                     {service.detail}
                   </p>
 
                   {isPhone ? (
-                    <a
-                      href={service.href}
-                      className="service-cta-link"
-                    >
+                    <a href={service.href} className="service-cta-link">
                       Call Now
                     </a>
                   ) : (
@@ -306,94 +306,87 @@ export function ServicesGrid() {
           </div>
         </div>
 
-        {/* ── MOBILE accordion ── */}
+        {/* ── MOBILE: accordion — renders immediately, no ScrollReveal ── */}
         <div className="lg:hidden">
-          <ScrollReveal>
-            <h2
-              className="font-serif font-semibold text-white leading-[1.1] mb-10"
-              style={{ fontSize: 'clamp(1.9rem,7vw,2.6rem)' }}
-            >
-              More Than<br />
-              <em className="not-italic" style={{ color: 'var(--gold-primary)' }}>a Jewelry Store</em>
-            </h2>
-          </ScrollReveal>
+          <h2
+            className="font-serif font-semibold text-white leading-[1.1] mb-10"
+            style={{ fontSize: 'clamp(1.9rem,7vw,2.6rem)' }}
+          >
+            More Than<br />
+            <em className="not-italic" style={{ color: 'var(--gold-primary)' }}>a Jewelry Store</em>
+          </h2>
 
           {SERVICES.map((s, i) => {
             const SIcon = s.icon
             const isOpen = active === i
             return (
-              <ScrollReveal key={s.title} delay={i * 0.04}>
-                <div
-                  className="border-b"
-                  style={{ borderColor: 'rgba(255,255,255,0.07)' }}
+              <div
+                key={s.title}
+                className="border-b"
+                style={{
+                  borderColor: 'rgba(255,255,255,0.07)',
+                  animation: 'serviceRowIn 0.55s cubic-bezier(0.22,1,0.36,1) both',
+                  animationDelay: `${0.08 + i * 0.06}s`,
+                }}
+              >
+                <button
+                  onClick={() => setActive(isOpen ? (i + 1) % SERVICES.length : i)}
+                  className="w-full flex items-center gap-4 py-5 text-left"
+                  aria-expanded={isOpen}
                 >
-                  <button
-                    onClick={() => setActive(isOpen ? (i + 1) % SERVICES.length : i)}
-                    className="w-full flex items-center gap-4 py-5 text-left"
-                    aria-expanded={isOpen}
+                  <span
+                    className="font-sans flex-shrink-0"
+                    style={{ fontSize: 11, letterSpacing: '0.14em', color: 'var(--gold-primary)' }}
                   >
-                    <span
-                      className="font-sans flex-shrink-0"
-                      style={{ fontSize: 11, letterSpacing: '0.14em', color: 'var(--gold-primary)' }}
-                    >
-                      {s.index}
-                    </span>
-                    <span
-                      className="font-serif flex-1 transition-colors duration-200"
-                      style={{
-                        fontSize: 20,
-                        fontWeight: 500,
-                        color: isOpen ? '#fff' : 'rgba(255,255,255,0.5)',
-                      }}
-                    >
-                      {s.title}
-                    </span>
-                    <SIcon
-                      className="flex-shrink-0 w-5 h-5 transition-all duration-300"
-                      style={{ color: isOpen ? 'var(--gold-primary)' : 'rgba(255,255,255,0.2)' }}
-                      aria-hidden="true"
-                    />
-                  </button>
+                    {s.index}
+                  </span>
+                  <span
+                    className="font-serif flex-1"
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 500,
+                      color: isOpen ? '#fff' : 'rgba(255,255,255,0.5)',
+                      transition: 'color 0.2s ease',
+                    }}
+                  >
+                    {s.title}
+                  </span>
+                  <SIcon
+                    className="flex-shrink-0 w-5 h-5"
+                    style={{
+                      color: isOpen ? 'var(--gold-primary)' : 'rgba(255,255,255,0.2)',
+                      transition: 'color 0.2s ease',
+                    }}
+                    aria-hidden="true"
+                  />
+                </button>
 
-                  {isOpen && (
-                    <LazyMotion features={domAnimation}>
-                      <m.div
-                        initial={shouldReduce ? {} : { height: 0, opacity: 0 }}
-                        animate={shouldReduce ? {} : { height: 'auto', opacity: 1 }}
-                        exit={shouldReduce ? {} : { height: 0, opacity: 0 }}
-                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden"
+                {isOpen && (
+                  <LazyMotion features={domAnimation}>
+                    <m.div
+                      initial={shouldReduce ? undefined : { height: 0, opacity: 0 }}
+                      animate={shouldReduce ? undefined : { height: 'auto', opacity: 1 }}
+                      exit={shouldReduce ? undefined : { height: 0, opacity: 0 }}
+                      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <p
+                        className="font-body leading-[1.85] pb-2"
+                        style={{ fontSize: 15, color: 'var(--text-muted)' }}
                       >
-                        <p
-                          className="font-body leading-[1.85] pb-2"
-                          style={{ fontSize: 15, color: 'var(--text-muted)' }}
-                        >
-                          {s.description}
-                        </p>
-                        <div className="pb-6 pt-3">
-                          {s.href.startsWith('tel:') ? (
-                            <a
-                              href={s.href}
-                              className="font-sans uppercase"
-                              style={{ fontSize: 11, letterSpacing: '0.2em', color: 'var(--gold-primary)' }}
-                            >
-                              Call Now →
-                            </a>
-                          ) : (
-                            <Link
-                              href={s.href}
-                              className="font-sans uppercase"
-                              style={{ fontSize: 11, letterSpacing: '0.2em', color: 'var(--gold-primary)' }}
-                            >
-                              Learn More →
-                            </Link>
-                          )}
-                        </div>
-                      </m.div>
-                    </LazyMotion>
-                  )}
-                </div>
-              </ScrollReveal>
+                        {s.description}
+                      </p>
+                      <div className="pb-6 pt-3">
+                        {s.href.startsWith('tel:') ? (
+                          <a href={s.href} className="service-cta-link">Call Now</a>
+                        ) : (
+                          <Link href={s.href} className="service-cta-link">Learn More</Link>
+                        )}
+                      </div>
+                    </m.div>
+                  </LazyMotion>
+                )}
+              </div>
             )
           })}
         </div>

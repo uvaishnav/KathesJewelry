@@ -6,7 +6,11 @@ export function InstagramFeed() {
 
   return (
     <section
-      className="bg-[var(--dark-base)] py-[var(--section-padding)] px-[var(--container-padding)]"
+      className="relative py-[var(--section-padding)] px-[var(--container-padding)]"
+      style={{
+        backgroundColor: 'var(--dark-base)',
+        backgroundImage: 'radial-gradient(ellipse at 85% 15%, rgba(201,169,110,0.05) 0%, transparent 45%)',
+      }}
       aria-label="Instagram feed"
     >
       <div style={{ maxWidth: 'var(--max-width)' }} className="mx-auto">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { m, LazyMotion, domAnimation, useReducedMotion } from 'motion/react'
 
 interface ScrollRevealProps {
@@ -10,8 +10,8 @@ interface ScrollRevealProps {
   direction?: 'up' | 'left' | 'right' | 'scale' | 'fade'
   duration?: number
   /**
-   * once: false → re-animates every time the element enters the viewport
-   * Enables bidirectional scroll storytelling
+   * once: true  → animate in once, stay visible (SAFE default)
+   * once: false → re-animates on every viewport entry (use sparingly)
    */
   once?: boolean
   amount?: number
@@ -23,8 +23,8 @@ export function ScrollReveal({
   delay = 0,
   direction = 'up',
   duration = 0.65,
-  once = false,
-  amount = 0.1,
+  once = true,
+  amount = 0.08,
 }: ScrollRevealProps) {
   const shouldReduceMotion = useReducedMotion()
 
@@ -34,16 +34,10 @@ export function ScrollReveal({
 
   const initial = {
     opacity: 0,
-    y: direction === 'up' ? 28 : 0,
-    x: direction === 'left' ? -28 : direction === 'right' ? 28 : 0,
-    scale:
-      direction === 'scale'
-        ? 0.92
-        : direction === 'up'
-          ? 0.96
-          : 1,
-    filter:
-      direction === 'fade' ? 'blur(4px)' : 'blur(0px)',
+    y: direction === 'up' ? 24 : 0,
+    x: direction === 'left' ? -24 : direction === 'right' ? 24 : 0,
+    scale: direction === 'scale' ? 0.94 : direction === 'up' ? 0.97 : 1,
+    filter: direction === 'fade' ? 'blur(6px)' : undefined,
   }
 
   const animate = {
@@ -51,7 +45,7 @@ export function ScrollReveal({
     y: 0,
     x: 0,
     scale: 1,
-    filter: 'blur(0px)',
+    filter: direction === 'fade' ? 'blur(0px)' : undefined,
   }
 
   return (
@@ -60,7 +54,7 @@ export function ScrollReveal({
         className={className}
         initial={initial}
         whileInView={animate}
-        viewport={{ once, amount, margin: '-50px 0px' }}
+        viewport={{ once, amount, margin: '-40px 0px' }}
         transition={{
           duration,
           delay,
@@ -74,8 +68,8 @@ export function ScrollReveal({
 }
 
 /**
- * ClipReveal — Apple-style clip-path text/element entrance.
- * Content sweeps up into view — cinematic, editorial.
+ * ClipReveal — Apple-style clip-path text entrance.
+ * Uses IntersectionObserver directly (most reliable, zero hydration issues).
  */
 export function ClipReveal({
   children,
@@ -104,7 +98,7 @@ export function ClipReveal({
           observer.disconnect()
         }
       },
-      { rootMargin: '-48px' }
+      { rootMargin: '-40px' }
     )
     observer.observe(el)
     return () => observer.disconnect()
@@ -112,6 +106,55 @@ export function ClipReveal({
 
   return (
     <div ref={ref} className={className}>
+      {children}
+    </div>
+  )
+}
+
+/**
+ * FadeOnScroll — lightweight CSS-only fade via IntersectionObserver.
+ * Zero Framer Motion overhead. Most reliable for simple reveals.
+ */
+export function FadeOnScroll({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: React.ReactNode
+  className?: string
+  delay?: number
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+  const shouldReduceMotion = useReducedMotion()
+
+  useEffect(() => {
+    if (shouldReduceMotion) { setVisible(true); return }
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '-32px', threshold: 0.05 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [shouldReduceMotion])
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(20px)',
+        transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
+      }}
+    >
       {children}
     </div>
   )

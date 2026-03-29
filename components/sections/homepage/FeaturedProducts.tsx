@@ -32,7 +32,11 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
 
   return (
     <section
-      className="bg-[var(--warm-cream)] py-[var(--section-padding)] px-[var(--container-padding)]" data-section="light"
+      className="relative py-[var(--section-padding)] px-[var(--container-padding)]"
+      style={{
+        backgroundColor: 'var(--warm-cream)',
+        backgroundImage: 'radial-gradient(ellipse at 95% 5%, rgba(201,169,110,0.08) 0%, transparent 44%)',
+      }}
       aria-label="Featured products"
     >
       <div style={{ maxWidth: 'var(--max-width)' }} className="mx-auto">

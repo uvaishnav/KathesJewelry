@@ -1,6 +1,6 @@
 import { MapPin, Clock, Phone, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { ScrollReveal } from '@/components/ui/ScrollReveal'
+import { ScrollReveal, FadeOnScroll } from '@/components/ui/ScrollReveal'
 
 const HOURS = [
   { day: 'Monday', hours: '10:00 AM – 6:00 PM' },
@@ -15,20 +15,16 @@ const HOURS = [
 export function VisitUs() {
   return (
     <section
-      className="relative bg-[var(--warm-cream)] overflow-hidden"
+      className="relative overflow-hidden"
+      style={{
+        backgroundColor: 'var(--warm-cream)',
+        backgroundImage: [
+          'radial-gradient(ellipse at 100% 0%, rgba(201,169,110,0.09) 0%, transparent 42%)',
+          'radial-gradient(ellipse at 0% 100%, rgba(201,169,110,0.06) 0%, transparent 40%)',
+        ].join(', '),
+      }}
       aria-label="Visit our store"
     >
-      {/* Premium cream: dual corner blooms */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: [
-            'radial-gradient(ellipse at 100% 0%, rgba(201,169,110,0.08) 0%, transparent 42%)',
-            'radial-gradient(ellipse at 0% 100%, rgba(201,169,110,0.06) 0%, transparent 40%)',
-          ].join(", "),
-        }}
-        aria-hidden="true"
-      />
       <div className="relative z-10 py-[var(--section-padding)] px-[var(--container-padding)]">
         <div
           style={{ maxWidth: 'var(--max-width)' }}

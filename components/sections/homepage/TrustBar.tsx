@@ -16,8 +16,11 @@ const PILLARS: TrustPillar[] = [
 export function TrustBar() {
   return (
     <section
-      className="bg-[var(--charcoal)] relative overflow-hidden"
-      data-section="dark"
+      className="relative overflow-hidden"
+      style={{
+        backgroundColor: 'var(--charcoal)',
+        backgroundImage: 'radial-gradient(ellipse at 50% 100%, rgba(201,169,110,0.06) 0%, transparent 55%)',
+      }}
       aria-label="Trust indicators"
     >
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[var(--gold-primary)]/40 to-transparent" aria-hidden="true" />

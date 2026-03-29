@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Star } from 'lucide-react'
@@ -8,186 +8,172 @@ import { useReducedMotion } from 'motion/react'
 import { Button } from '@/components/ui/Button'
 
 const SERVICES = [
-  'Expert Jewelry Repair',
-  'Custom Engagement Rings',
-  'We Buy Gold & Silver',
-  'Fine Estate Jewelry',
-  'Watch Repair',
-  'Free Consultation',
+  { label: 'Expert Jewelry Repair', short: 'Repairs' },
+  { label: 'Custom Engagement Rings', short: 'Custom Design' },
+  { label: 'We Buy Gold & Silver', short: 'Gold Buying' },
+  { label: 'Fine Estate Jewelry', short: 'Estate Pieces' },
+  { label: 'Watch Repair', short: 'Watches' },
 ]
 
-// Shape configs per service — different clip-path polygons for variety
+// Each service gets a different geometric clip-path
 const SHAPES = [
-  // Octagon
-  'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
-  // Diamond
-  'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
-  // Wide hexagon
-  'polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%)',
-  // Pentagon
-  'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',
-  // Tall hexagon
-  'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
-  // Gem facet
-  'polygon(50% 0%, 80% 15%, 100% 45%, 80% 85%, 50% 100%, 20% 85%, 0% 45%, 20% 15%)',
+  'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)', // octagon
+  'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',                                       // diamond
+  'polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%)',                    // wide hex
+  'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',                            // pentagon
+  'polygon(50% 0%, 80% 15%, 100% 45%, 80% 85%, 50% 100%, 20% 85%, 0% 45%, 20% 15%)', // gem
 ]
 
 const REVIEW_PLATFORMS = [
-  { name: 'Google', rating: '4.8', url: 'https://www.google.com/search?q=Kathe%27s+Jewelry+New+York+reviews' },
-  { name: 'Yelp', rating: '4.8', url: 'https://www.yelp.com/biz/kathes-jewelry-new-york' },
-  { name: 'TrustAnalytica', rating: '4.8', url: 'https://jewelry-store.trustanalytica.org/us/ny/new-york/reviews/kathe-s-jewelry' },
+  { name: 'Google',        url: 'https://www.google.com/search?q=Kathe%27s+Jewelry+New+York+reviews' },
+  { name: 'Yelp',          url: 'https://www.yelp.com/biz/kathes-jewelry-new-york' },
+  { name: 'TrustAnalytica', url: 'https://jewelry-store.trustanalytica.org/us/ny/new-york/reviews/kathe-s-jewelry' },
 ]
 
-// ── Service Showcase ─────────────────────────────────────────────
+// ── Service Showcase ──────────────────────────────────────────────
 function ServiceShowcase() {
   const [current, setCurrent] = useState(0)
-  const [phase, setPhase] = useState<'in' | 'hold' | 'out'>('in')
-  const [displayText, setDisplayText] = useState(SERVICES[0])
+  const [phase, setPhase] = useState<'in' | 'hold' | 'out'>('hold') // start held so content shows immediately
   const reduced = useReducedMotion()
 
   useEffect(() => {
     if (reduced) return
-
     let t: ReturnType<typeof setTimeout>
     if (phase === 'in') {
-      t = setTimeout(() => setPhase('hold'), 400)
+      t = setTimeout(() => setPhase('hold'), 350)
     } else if (phase === 'hold') {
-      t = setTimeout(() => setPhase('out'), 2800)
+      t = setTimeout(() => setPhase('out'), 3000)
     } else {
-      // out → advance
       t = setTimeout(() => {
-        const next = (current + 1) % SERVICES.length
-        setCurrent(next)
-        setDisplayText(SERVICES[next])
+        setCurrent((c) => (c + 1) % SERVICES.length)
         setPhase('in')
-      }, 500)
+      }, 450)
     }
     return () => clearTimeout(t)
-  }, [phase, current, reduced])
+  }, [phase, reduced])
 
-  const isVisible = phase !== 'out'
+  const isIn = phase !== 'out'
   const shape = SHAPES[current]
 
   return (
     <div
       className="relative flex items-center justify-center"
-      style={{ width: 340, height: 340 }}
+      style={{ width: 360, height: 360 }}
       aria-hidden="true"
     >
       {/* Rotating outer ring */}
       <div
         className="absolute inset-0 rounded-full"
         style={{
-          border: '1px solid rgba(201,169,110,0.15)',
-          animation: reduced ? 'none' : 'slowSpin 18s linear infinite',
+          border: '1px solid rgba(201,169,110,0.18)',
+          animation: reduced ? 'none' : 'slowSpin 20s linear infinite',
         }}
       />
-      {/* Second ring, counter-rotate */}
+      {/* Counter-rotating dashed ring */}
       <div
-        className="absolute"
+        className="absolute rounded-full"
         style={{
-          inset: 20,
-          borderRadius: '50%',
-          border: '1px dashed rgba(201,169,110,0.1)',
-          animation: reduced ? 'none' : 'slowSpin 26s linear infinite reverse',
+          inset: 24,
+          border: '1px dashed rgba(201,169,110,0.10)',
+          animation: reduced ? 'none' : 'slowSpin 28s linear infinite reverse',
         }}
       />
 
-      {/* Dot markers on the outer ring */}
+      {/* Ring dots */}
       {[0, 72, 144, 216, 288].map((deg) => (
         <div
           key={deg}
-          className="absolute"
+          className="absolute rounded-full"
           style={{
-            width: 4,
-            height: 4,
-            background: 'rgba(201,169,110,0.4)',
-            borderRadius: '50%',
+            width: 5,
+            height: 5,
+            background: 'rgba(201,169,110,0.45)',
             top: '50%',
             left: '50%',
-            transform: `translate(-50%,-50%) rotate(${deg}deg) translateY(-168px)`,
+            transform: `translate(-50%,-50%) rotate(${deg}deg) translateY(-178px)`,
           }}
         />
       ))}
 
-      {/* Central morphing shape */}
+      {/* Morphing geometric shape */}
       <div
         className="absolute"
         style={{
-          inset: 44,
+          inset: 50,
           clipPath: shape,
-          background: 'linear-gradient(135deg, rgba(201,169,110,0.12) 0%, rgba(201,169,110,0.04) 100%)',
-          border: '1px solid rgba(201,169,110,0.25)',
-          transition: 'clip-path 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.45s ease, transform 0.45s ease',
-          opacity: isVisible ? 1 : 0,
-          transform: isVisible ? 'scale(1)' : 'scale(0.88)',
+          background: 'linear-gradient(135deg, rgba(201,169,110,0.15) 0%, rgba(201,169,110,0.04) 100%)',
+          border: '1px solid rgba(201,169,110,0.28)',
+          opacity: isIn ? 1 : 0,
+          transform: isIn ? 'scale(1)' : 'scale(0.86)',
+          transition: 'clip-path 0.7s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease, transform 0.45s ease',
         }}
       />
 
-      {/* Inner glow */}
+      {/* Inner radial glow */}
       <div
         className="absolute"
         style={{
-          inset: 60,
-          background: 'radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 70%)',
+          inset: 68,
+          background: 'radial-gradient(circle, rgba(201,169,110,0.10) 0%, transparent 68%)',
+          opacity: isIn ? 1 : 0,
           transition: 'opacity 0.4s ease',
-          opacity: isVisible ? 1 : 0,
         }}
       />
 
-      {/* Service text — centered in shape */}
+      {/* Service text — always inside the shape */}
       <div
-        className="absolute text-center px-10"
+        className="absolute text-center"
         style={{
           inset: 0,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          transition: 'opacity 0.4s ease, transform 0.45s cubic-bezier(0.22,1,0.36,1)',
-          opacity: isVisible ? 1 : 0,
-          transform: isVisible ? 'translateY(0)' : 'translateY(-12px)',
+          padding: '0 56px',
+          opacity: isIn ? 1 : 0,
+          transform: isIn ? 'translateY(0)' : 'translateY(-10px)',
+          transition: 'opacity 0.38s ease, transform 0.42s cubic-bezier(0.22,1,0.36,1)',
         }}
       >
         <p
           className="font-sans uppercase mb-3"
-          style={{ fontSize: 9, letterSpacing: '0.38em', color: 'rgba(201,169,110,0.65)' }}
+          style={{ fontSize: 9, letterSpacing: '0.4em', color: 'rgba(201,169,110,0.6)' }}
         >
           We specialize in
         </p>
         <h3
-          className="font-serif font-semibold text-white leading-tight"
-          style={{ fontSize: 'clamp(1.2rem,2.2vw,1.6rem)', letterSpacing: '-0.01em' }}
+          className="font-serif font-semibold text-white"
+          style={{
+            fontSize: 'clamp(1.2rem, 2.4vw, 1.65rem)',
+            letterSpacing: '-0.01em',
+            lineHeight: 1.25,
+            textAlign: 'center',
+          }}
         >
-          {reduced ? SERVICES[0] : displayText}
+          {reduced ? SERVICES[0].label : SERVICES[current].label}
         </h3>
       </div>
 
-      {/* Progress indicator — dots below */}
+      {/* Progress dots at bottom */}
       <div
         className="absolute flex gap-2 items-center justify-center"
-        style={{ bottom: 12, left: '50%', transform: 'translateX(-50%)' }}
+        style={{ bottom: 18, left: '50%', transform: 'translateX(-50%)' }}
       >
         {SERVICES.map((_, i) => (
           <button
             key={i}
-            onClick={() => {
-              setCurrent(i)
-              setDisplayText(SERVICES[i])
-              setPhase('in')
-            }}
-            className="transition-all duration-400"
+            onClick={() => { setCurrent(i); setPhase('hold') }}
             style={{
               width: i === current ? 20 : 5,
-              height: 3,
+              height: 4,
               borderRadius: 2,
-              background: i === current ? 'var(--gold-primary)' : 'rgba(201,169,110,0.2)',
+              background: i === current ? 'var(--gold-primary)' : 'rgba(201,169,110,0.22)',
               transition: 'all 0.4s cubic-bezier(0.22,1,0.36,1)',
-              cursor: 'pointer',
               border: 'none',
               padding: 0,
+              cursor: 'pointer',
             }}
-            aria-label={`View ${SERVICES[i]}`}
+            aria-label={`View ${SERVICES[i].label}`}
           />
         ))}
       </div>
@@ -195,80 +181,96 @@ function ServiceShowcase() {
   )
 }
 
-// ── Rating Badge — the star-rating redesigned ─────────────────────
+// ── Rating Badge — prominent, staggered star fill ──────────────────
 function RatingBadge() {
-  const [starred, setStarred] = useState(false)
+  const [filledCount, setFilledCount] = useState(0)
   const reduced = useReducedMotion()
 
   useEffect(() => {
-    if (reduced) { setStarred(true); return }
-    const t = setTimeout(() => setStarred(true), 900)
-    return () => clearTimeout(t)
+    if (reduced) { setFilledCount(5); return }
+    // stagger star fills after 600ms
+    let i = 0
+    const interval = setInterval(() => {
+      i++
+      setFilledCount(i)
+      if (i >= 5) clearInterval(interval)
+    }, 100)
+    const start = setTimeout(() => {
+      clearInterval(interval)
+      setFilledCount(5)
+    }, 150)
+    const delay = setTimeout(() => {
+      i = 0
+      setFilledCount(0)
+      const fill = setInterval(() => {
+        i++
+        setFilledCount(i)
+        if (i >= 5) clearInterval(fill)
+      }, 100)
+    }, 600)
+    return () => { clearInterval(interval); clearTimeout(start); clearTimeout(delay) }
   }, [reduced])
 
   return (
     <div className="mb-10">
-      {/* Stars + number row */}
+      {/* Stars row */}
       <div className="flex items-center gap-3 mb-3">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-[3px]">
           {[1, 2, 3, 4, 5].map((n) => (
             <Star
               key={n}
               aria-hidden="true"
               style={{
-                width: 16,
-                height: 16,
+                width: 17,
+                height: 17,
                 color: 'var(--gold-primary)',
-                fill: starred ? 'var(--gold-primary)' : 'transparent',
-                transition: `fill 0.3s ease ${(n - 1) * 0.1}s`,
+                fill: n <= filledCount ? 'var(--gold-primary)' : 'transparent',
+                transition: 'fill 0.2s ease',
               }}
             />
           ))}
         </div>
         <span
           className="font-sans font-bold text-white"
-          style={{ fontSize: 20, lineHeight: 1 }}
+          style={{ fontSize: 22, lineHeight: 1, letterSpacing: '-0.02em' }}
         >
           4.8
         </span>
         <span
           className="font-body italic"
-          style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)' }}
+          style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)' }}
         >
           out of 5
         </span>
       </div>
 
       {/* Platform links */}
-      <div className="flex items-center flex-wrap gap-x-1 gap-y-2">
+      <div className="flex items-center flex-wrap gap-x-1 gap-y-1">
         <span
           className="font-sans"
-          style={{ fontSize: 11, letterSpacing: '0.04em', color: 'rgba(255,255,255,0.4)' }}
+          style={{ fontSize: 11, color: 'rgba(255,255,255,0.38)', letterSpacing: '0.04em' }}
         >
-          Rated across
+          Rated on
         </span>
         {REVIEW_PLATFORMS.map((p, i) => (
           <span key={p.name} className="flex items-center gap-1">
             {i > 0 && (
-              <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11 }}>·</span>
+              <span style={{ color: 'rgba(255,255,255,0.18)', fontSize: 11 }}> · </span>
             )}
             <a
               href={p.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-sans group relative"
-              style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)' }}
-              aria-label={`${p.rating} stars on ${p.name}`}
+              className="font-sans group relative inline-block"
+              style={{ fontSize: 12, color: 'rgba(255,255,255,0.72)', textDecoration: 'none' }}
+              aria-label={`Read our reviews on ${p.name}`}
             >
-              <span className="group-hover:text-[var(--gold-primary)] transition-colors duration-200">
+              <span
+                style={{ transition: 'color 0.2s ease' }}
+                className="group-hover:text-[var(--gold-primary)]"
+              >
                 {p.name}
               </span>
-              {/* Underline trace */}
-              <span
-                className="absolute -bottom-0.5 left-0 h-px bg-[var(--gold-primary)] transition-all duration-300"
-                style={{ width: 0 }}
-                aria-hidden="true"
-              />
             </a>
           </span>
         ))}
@@ -277,40 +279,33 @@ function RatingBadge() {
   )
 }
 
-// ── Scroll indicator — elegant line with traveling dot ───────────
+// ── Elegant traveling-dot scroll indicator ─────────────────────────
 function ScrollIndicator() {
   const reduced = useReducedMotion()
   return (
     <div
-      className="absolute left-1/2 flex flex-col items-center gap-0"
-      style={{ bottom: 28, transform: 'translateX(-50%)', zIndex: 3 }}
+      className="absolute left-1/2 flex flex-col items-center"
+      style={{ bottom: 32, transform: 'translateX(-50%)', zIndex: 3 }}
       aria-hidden="true"
     >
       <span
         className="font-sans uppercase mb-2"
-        style={{ fontSize: 8, letterSpacing: '0.38em', color: 'rgba(201,169,110,0.45)' }}
+        style={{ fontSize: 8, letterSpacing: '0.38em', color: 'rgba(201,169,110,0.4)' }}
       >
         Scroll
       </span>
-      <div className="relative" style={{ width: 1, height: 52, overflow: 'hidden' }}>
-        {/* Static line */}
-        <div
-          className="absolute inset-0"
-          style={{ background: 'linear-gradient(to bottom, rgba(201,169,110,0.0), rgba(201,169,110,0.3), rgba(201,169,110,0.0))' }}
-        />
-        {/* Traveling dot */}
+      <div className="relative" style={{ width: 1, height: 52, background: 'rgba(201,169,110,0.15)' }}>
         {!reduced && (
           <div
+            className="absolute rounded-full"
             style={{
-              position: 'absolute',
-              top: 0,
-              left: '50%',
-              transform: 'translateX(-50%)',
               width: 3,
               height: 3,
-              borderRadius: '50%',
               background: 'var(--gold-primary)',
-              animation: 'travelDown 1.8s ease-in-out infinite',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              top: 0,
+              animation: 'travelDown 2s ease-in-out infinite',
             }}
           />
         )}
@@ -319,7 +314,7 @@ function ScrollIndicator() {
   )
 }
 
-// ── Hero ─────────────────────────────────────────────────────────
+// ── Hero ───────────────────────────────────────────────────────────
 export function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const reduced = useReducedMotion()
@@ -327,7 +322,7 @@ export function Hero() {
   useEffect(() => {
     if (reduced || !titleRef.current) return
     const words = titleRef.current.querySelectorAll<HTMLElement>('.hero-word')
-    words.forEach((w, i) => { w.style.animationDelay = `${0.2 + i * 0.1}s` })
+    words.forEach((w, i) => { w.style.animationDelay = `${0.2 + i * 0.12}s` })
   }, [reduced])
 
   const H1_WORDS = ["New York's", 'Trusted', 'Jeweler', 'Since', '1993']
@@ -341,19 +336,19 @@ export function Hero() {
       {/* Background */}
       <Image
         src="/images/hero-store-interior.webp"
-        alt="Kathe's Jewelry store interior — East Village NYC — warm display cases with gold and silver jewelry"
+        alt="Kathe's Jewelry store interior — warm display cases with gold and silver jewelry, East Village NYC"
         fill
         priority
         className="object-cover object-center"
         sizes="100vw"
       />
 
-      {/* Layered overlay */}
+      {/* Multi-layer overlay for depth */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(155deg, rgba(17,17,17,0.92) 0%, rgba(43,32,24,0.78) 38%, rgba(17,17,17,0.65) 68%, rgba(17,17,17,0.82) 100%)',
+            'linear-gradient(158deg, rgba(17,17,17,0.92) 0%, rgba(43,32,24,0.76) 36%, rgba(17,17,17,0.62) 66%, rgba(17,17,17,0.84) 100%)',
         }}
         aria-hidden="true"
       />
@@ -361,12 +356,11 @@ export function Hero() {
       <div
         className="absolute pointer-events-none"
         style={{
-          bottom: '-5%',
-          left: '-5%',
-          width: '50%',
-          height: '55%',
-          background:
-            'radial-gradient(ellipse at bottom left, rgba(201,169,110,0.12) 0%, transparent 65%)',
+          bottom: '-10%',
+          left: '-8%',
+          width: '55%',
+          height: '60%',
+          background: 'radial-gradient(ellipse at bottom left, rgba(201,169,110,0.14) 0%, transparent 62%)',
         }}
         aria-hidden="true"
       />
@@ -377,10 +371,10 @@ export function Hero() {
         style={{ zIndex: 2, paddingTop: '5rem' }}
       >
         <div
-          className="mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
+          className="mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
           style={{ maxWidth: 'var(--max-width)', padding: '0 var(--container-padding)' }}
         >
-          {/* LEFT: Copy */}
+          {/* LEFT */}
           <div>
             {/* Eyebrow */}
             <div className="flex items-center gap-3 mb-8">
@@ -393,7 +387,7 @@ export function Hero() {
               </span>
             </div>
 
-            {/* H1 */}
+            {/* H1 with word-by-word entrance */}
             <h1
               ref={titleRef}
               className="font-serif font-bold text-white leading-[1.05] tracking-tight mb-6"
@@ -416,7 +410,7 @@ export function Hero() {
 
             {/* Body */}
             <p
-              className="font-body leading-[1.8] mb-8"
+              className="font-body leading-[1.82] mb-8"
               style={{
                 fontSize: 'clamp(15px,2vw,18px)',
                 maxWidth: 480,
@@ -428,7 +422,7 @@ export function Hero() {
               is treated like it belongs to family.
             </p>
 
-            {/* ── RATING BADGE — more prominent ── */}
+            {/* Rating — prominent */}
             <RatingBadge />
 
             {/* CTAs */}
@@ -442,10 +436,8 @@ export function Hero() {
                 style={{
                   fontSize: 12,
                   letterSpacing: '0.16em',
-                  border: '1px solid rgba(255,255,255,0.35)',
+                  border: '1px solid rgba(255,255,255,0.32)',
                   color: 'rgba(255,255,255,0.85)',
-                  position: 'relative',
-                  overflow: 'hidden',
                 }}
               >
                 Discover Our Services
@@ -453,14 +445,13 @@ export function Hero() {
             </div>
           </div>
 
-          {/* RIGHT: Service showcase */}
+          {/* RIGHT: Service showcase — hidden on mobile */}
           <div className="hidden lg:flex justify-center items-center">
             <ServiceShowcase />
           </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
       <ScrollIndicator />
     </section>
   )

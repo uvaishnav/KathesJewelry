@@ -96,8 +96,14 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
 
   return (
     <section
-      className="bg-[var(--dark-base)] py-[var(--section-padding)] relative overflow-hidden"
-      data-section="dark"
+      className="relative py-[var(--section-padding)] overflow-hidden"
+      style={{
+        backgroundColor: 'var(--dark-base)',
+        backgroundImage: [
+          'radial-gradient(ellipse at 50% 0%, rgba(201,169,110,0.06) 0%, transparent 50%)',
+          'radial-gradient(ellipse at 8% 90%, rgba(201,169,110,0.05) 0%, transparent 45%)',
+        ].join(', '),
+      }}
       aria-label="Customer testimonials"
     >
       {/* Top atmospheric gradient */}

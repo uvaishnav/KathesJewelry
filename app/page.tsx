@@ -35,49 +35,41 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* DARK: Hero */}
+      {/* DARK: Hero → Trust Bar (intentional adjacent darks) */}
       <Hero />
-
-      {/* DARK → DARK: charcoal trust strip — intentional warm transition */}
       <TrustBar />
 
-      {/* DARK: Services — editorial two-panel */}
+      {/* DARK → DARK: Services (same background, no transition needed) */}
       <ServicesGrid />
 
-      {/* DARK → CREAM: subtle gradient bridge */}
-      <SectionTransition variant="dark-to-cream" />
+      {/* DARK → DARK: Category Mosaic */}
+      <CategoryMosaic />
+
+      {/* DARK → CREAM: blend into featured products */}
+      <SectionTransition variant="dark-to-cream" height="96px" />
 
       {/* CREAM: Featured Products */}
       <FeaturedProducts products={products} />
 
-      {/* CREAM → DARK: angled wipe */}
-      <SectionTransition variant="cream-to-dark" shape="angle" />
-
-      {/* DARK: Category Mosaic — expanding cards */}
-      <CategoryMosaic />
-
-      {/* DARK → CREAM */}
-      <SectionTransition variant="dark-to-cream" />
-
-      {/* CREAM: Our Story */}
+      {/* CREAM → CREAM: Our Story (same background, seamless) */}
       <OurStoryStrip />
 
-      {/* CREAM → DARK: angled wipe */}
-      <SectionTransition variant="cream-to-dark" shape="angle" />
+      {/* CREAM → DARK: blend into testimonials */}
+      <SectionTransition variant="cream-to-dark" height="96px" />
 
-      {/* DARK: Testimonials — marquee */}
+      {/* DARK: Testimonials */}
       <Testimonials testimonials={testimonials} />
 
-      {/* DARK → CREAM */}
-      <SectionTransition variant="dark-to-cream" />
+      {/* DARK → CREAM: blend into visit us */}
+      <SectionTransition variant="dark-to-cream" height="96px" />
 
       {/* CREAM: Visit Us */}
       <VisitUs />
 
-      {/* CREAM → DARK */}
-      <SectionTransition variant="cream-to-dark" />
+      {/* CREAM → DARK: blend into instagram */}
+      <SectionTransition variant="cream-to-dark" height="64px" />
 
-      {/* DARK: Instagram */}
+      {/* DARK: Instagram Feed */}
       <InstagramFeed />
     </>
   )
